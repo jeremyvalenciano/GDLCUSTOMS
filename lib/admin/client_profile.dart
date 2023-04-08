@@ -3,28 +3,28 @@ import 'package:proyectobd/admin/home_page_admin.dart';
 import 'package:proyectobd/components/label_text.dart';
 import 'package:proyectobd/components/simple_text.dart';
 import 'package:proyectobd/components/rounded_button.dart';
-import 'package:proyectobd/classes/employee_class.dart';
+import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/database.dart';
 
 final dbHelper = DatabaseHelper.instance;
 
-class EmployeeProfile extends StatefulWidget {
-  final Employee employee;
-  const EmployeeProfile({required this.employee, super.key});
+class ClientProfile extends StatefulWidget {
+  final Client client;
+  const ClientProfile({required this.client, super.key});
 
   @override
-  State<EmployeeProfile> createState() => _EmployeeProfileState();
+  State<ClientProfile> createState() => _ClientProfileState();
 }
 
-class _EmployeeProfileState extends State<EmployeeProfile> {
+class _ClientProfileState extends State<ClientProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.black,
-        title: const Text('PERFIL EMPLEADO',
-            style: TextStyle(color: Colors.white)),
+        title:
+            const Text('PERFIL CLIENTE', style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -42,27 +42,21 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                 endIndent: 50,
               ),
               const LabelText(text: "NOMBRE"),
-              SimpleText(text: widget.employee.name),
-              const LabelText(text: "RFC"),
-              SimpleText(text: widget.employee.rfc),
-              const LabelText(text: "REGIMEN FISCAL"),
-              SimpleText(text: widget.employee.fiscalRegime),
-              const LabelText(text: "ROL"),
-              SimpleText(text: widget.employee.role),
+              SimpleText(text: widget.client.name),
               const LabelText(text: "CORREO"),
-              SimpleText(text: widget.employee.email),
+              SimpleText(text: widget.client.email),
               const LabelText(text: "TELEFONO"),
-              SimpleText(text: widget.employee.cellphone),
+              SimpleText(text: widget.client.cellphone),
               const LabelText(text: "CIUDAD"),
-              SimpleText(text: widget.employee.city),
+              SimpleText(text: widget.client.city),
               const LabelText(text: "DIRECCION"),
-              SimpleText(text: widget.employee.address),
+              SimpleText(text: widget.client.address),
               const LabelText(text: "FECHA DE NACIMIENTO"),
-              SimpleText(text: widget.employee.birthday),
+              SimpleText(text: widget.client.birthday),
               const LabelText(text: "EDAD"),
-              SimpleText(text: widget.employee.age.toString()),
+              SimpleText(text: widget.client.age.toString()),
               const LabelText(text: "GENERO"),
-              SimpleText(text: widget.employee.genre),
+              SimpleText(text: widget.client.genre),
               const SizedBox(height: 20),
               Center(
                 child: RoundedButton(
@@ -85,9 +79,9 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text("Eliminar empleado"),
+                          title: const Text("Eliminar cliente"),
                           content: const Text(
-                              "¿Está seguro de que desea eliminar este empleado?"),
+                              "¿Está seguro de que desea eliminar este cliente?"),
                           actions: [
                             TextButton(
                               child: const Text("Cancelar"),
@@ -98,7 +92,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                             TextButton(
                               child: const Text("Eliminar"),
                               onPressed: () {
-                                dbHelper.deleteEmployee(widget.employee.rfc);
+                                dbHelper.deleteClient(widget.client.email);
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (context) =>

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/admin_login.dart';
-import 'client_screen.dart';
-import 'employee_screen.dart';
+import 'package:proyectobd/admin/admin_login.dart';
+import 'screens/client_screen.dart';
+import 'screens/employee_screen.dart';
 
 class SelectUser extends StatefulWidget {
   const SelectUser({super.key});

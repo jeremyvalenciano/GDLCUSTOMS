@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/employee_class.dart';
-import 'package:proyectobd/client_class.dart';
+import 'package:proyectobd/classes/employee_class.dart';
+import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/database.dart';
 import 'package:proyectobd/admin/employee_profile.dart';
+import 'package:proyectobd/admin/client_profile.dart';
+import 'package:proyectobd/home_page.dart';
 
 final dbHelper = DatabaseHelper.instance;
 
@@ -42,7 +44,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                         subtitle: Text('RFC: ${employee.rfc}'),
                         trailing: OutlinedButton(
                           onPressed: () {
-                            debugPrint(employee.rfc);
+                            //debugPrint(employee.rfc);
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
@@ -69,7 +71,10 @@ class _HomePageAdminState extends State<HomePageAdmin> {
             return const Text('Cargando...');
           }
           return snapshot.data!.isEmpty
-              ? const Text('No hay Clientes')
+              ? const Text(
+                  'No hay Clientes registrados',
+                  style: TextStyle(fontSize: 20),
+                )
               : ListView(
                   children: snapshot.data!.map(
                     (client) {
@@ -82,13 +87,14 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                         subtitle: Text('Celular: ${client.cellphone}'),
                         trailing: OutlinedButton(
                           onPressed: () {
-                            /*Navigator.of(context).push(
+                            debugPrint(client.name);
+                            Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
-                                  return const EmployeeProfile();
+                                  return ClientProfile(client: client);
                                 },
                               ),
-                            );*/
+                            );
                           },
                           child: const Icon(Icons.arrow_forward_ios),
                         ),
@@ -115,7 +121,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       ),
       drawer: Drawer(
         child: ListView(
-          children: const [
+          children: [
             UserAccountsDrawerHeader(
               accountName: Text('Admin'),
               accountEmail: Text('a'),
@@ -124,17 +130,47 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                     'https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png'),
               ),
             ),
-            ListTile(
+            const ListTile(
               leading: Icon(Icons.person),
               title: Text('Perfil'),
             ),
-            ListTile(
+            const ListTile(
               leading: Icon(Icons.settings),
               title: Text('Configuracion'),
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Cerrar Sesion'),
+              leading:const Icon(Icons.logout),
+              title: const Text('Cerrar Sesion'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Cerrar Sesión"),
+                      content: const Text(
+                          "¿Está seguro de que desea cerrar sesion?"),
+                      actions: [
+                        TextButton(
+                          child: const Text("Cancelar"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text("Cerrar Sesión"),
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (Route<dynamic> route) => false,
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),

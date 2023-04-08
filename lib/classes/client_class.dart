@@ -7,7 +7,7 @@ class Client {
   String cellphone;
   String birthday;
   String address;
-  String? genre;
+  String genre;
   String city;
   int age;
 
@@ -18,7 +18,7 @@ class Client {
     required this.cellphone,
     required this.birthday,
     required this.address,
-    this.genre,
+    required this.genre,
     required this.city,
     required this.age,
   });

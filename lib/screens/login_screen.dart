@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'select_user.dart';
-import 'database.dart';
+import '../select_user.dart';
+import '../database.dart';
 
 final dbHelper = DatabaseHelper.instance;
 

@@ -7,12 +7,15 @@ class LabelText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
-        color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0, left: 10.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+          color: Colors.white,
+        ),
       ),
     );
   }

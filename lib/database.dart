@@ -1,12 +1,12 @@
 // This file contains the database helper class
 import 'dart:io';
-import 'package:proyectobd/employee_class.dart';
+import 'package:proyectobd/classes/employee_class.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'admin_class.dart';
-import 'client_class.dart';
+import 'package:flutter/material.dart';
+import 'classes/admin_class.dart';
+import 'classes/client_class.dart';
 
 class DatabaseHelper {
   DatabaseHelper._privateConstructor();
@@ -128,6 +128,8 @@ class DatabaseHelper {
         : [];
     return employees;
   }
+  
+  
 
   Future<Employee> getEmployeeById(String rfc) async {
     Database db = await instance.database;

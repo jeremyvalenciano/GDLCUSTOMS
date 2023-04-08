@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/select_admin_info.dart';
-import 'database.dart';
+import 'package:proyectobd/admin/home_page_admin.dart';
+import '../database.dart';
 
 final dbHelper = DatabaseHelper.instance;
-bool isLoggedAdmin = false;
 
 final emailController = TextEditingController();
 final passwordController = TextEditingController();
 //Validacion de email y de contraseña
-void submitLoginFormAdmin() async {
+Future submitLoginFormAdmin() async {
   // Get the email and password from the form fields
   final String email = emailController.text;
   final String password = passwordController.text;
@@ -20,10 +19,10 @@ void submitLoginFormAdmin() async {
   // show an error message
   if (isLoggedIn) {
     debugPrint('Login successful');
-    isLoggedAdmin = true;
+    return true;
   } else {
     debugPrint('Login failed');
-    isLoggedAdmin = false;
+    return false;
   }
 }
 
@@ -100,32 +99,43 @@ class _AdminLoginState extends State<AdminLogin> {
                   ),
                 ),
                 onPressed: () async {
-                  submitLoginFormAdmin();
-                  if (isLoggedAdmin) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SelectAdminInfo()),
-                    );
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Error'),
-                          content:
-                              const Text('Usuario o contraseña incorrectos'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
+                  final myContext = context;
+                  final bool isLoggedIn = await submitLoginFormAdmin();
+                  debugPrint('isLoggedIn: $isLoggedIn');
+
+                  if (isLoggedIn) {
+                    if (mounted) {
+                      setState(() {
+                        Navigator.push(
+                          myContext,
+                          MaterialPageRoute(
+                              builder: (context) => const HomePageAdmin()),
                         );
-                      },
-                    );
+                      });
+                    }
+                  } else {
+                    if (mounted) {
+                      setState(() {
+                        showDialog(
+                          context: myContext,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text(
+                                  'Usuario o contraseña incorrectos'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      });
+                    }
                   }
                 },
                 child: const Text('Iniciar Sesión',
