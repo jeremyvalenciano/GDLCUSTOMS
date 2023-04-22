@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/home_page.dart';
+import 'package:proyectobd/classes/client_class.dart';
 
 //gogle images search
 
-
 class HomePageClient extends StatefulWidget {
-  const HomePageClient({super.key});
+  final Client client;
+  const HomePageClient({required this.client, super.key});
 
   @override
   State<HomePageClient> createState() => _HomePageClientState();
@@ -162,6 +164,71 @@ class _HomePageClientState extends State<HomePageClient> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Client Home'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text('Admin'),
+              accountEmail: Text('a'),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    'https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png'),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Perfil'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return const HomePage();
+                    },
+                  ),
+                );
+              },
+            ),
+            const ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Configuracion'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Cerrar Sesion'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Cerrar Sesión"),
+                      content: const Text(
+                          "¿Está seguro de que desea cerrar sesion?"),
+                      actions: [
+                        TextButton(
+                          child: const Text("Cancelar"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text("Cerrar Sesión"),
+                          onPressed: () {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (Route<dynamic> route) => false,
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

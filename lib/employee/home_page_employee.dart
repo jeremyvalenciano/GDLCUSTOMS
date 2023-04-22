@@ -1,62 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/admin/admin_profile.dart';
-import 'package:proyectobd/classes/employee_class.dart';
-import 'package:proyectobd/classes/client_class.dart';
-import 'package:proyectobd/classes/admin_class.dart';
-import 'package:proyectobd/database.dart';
-import 'package:proyectobd/admin/employee_profile.dart';
-import 'package:proyectobd/admin/client_profile.dart';
+import 'package:proyectobd/components/card_actual_car.dart';
+import 'package:proyectobd/components/card_request.dart';
+import 'package:proyectobd/employee/edit_status.dart';
+import 'package:proyectobd/employee/service_details.dart';
 import 'package:proyectobd/home_page.dart';
+import 'package:proyectobd/database.dart';
+import 'package:proyectobd/classes/employee_class.dart';
+import 'package:proyectobd/classes/car_class.dart';
+import 'package:proyectobd/classes/client_class.dart';
+
+class HomePageEmployee extends StatefulWidget {
+  const HomePageEmployee({super.key});
+
+  @override
+  State<HomePageEmployee> createState() => _HomePageEmployeeState();
+}
 
 final dbHelper = DatabaseHelper.instance;
 
-class HomePageAdmin extends StatefulWidget {
-  const HomePageAdmin({Key? key}) : super(key: key);
-
-  @override
-  State<HomePageAdmin> createState() => _HomePageAdminState();
-}
-
-class _HomePageAdminState extends State<HomePageAdmin> {
+class _HomePageEmployeeState extends State<HomePageEmployee> {
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = <Widget>[
     Container(
-      padding: const EdgeInsets.all(10),
-      child: FutureBuilder<List<Employee>>(
-        future: dbHelper.getEmployees(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Employee>> snapshot) {
+      padding: const EdgeInsets.all(20),
+      child: FutureBuilder<List<Car>>(
+        future: dbHelper.getCars(),
+        builder: (BuildContext context, AsyncSnapshot<List<Car>> snapshot) {
           if (!snapshot.hasData) {
             return const Text('Cargando...');
           }
           return snapshot.data!.isEmpty
               ? const Text(
-                  'No hay empleados registrados',
+                  'Sin Solicitudes de servicio actualmente',
                   style: TextStyle(fontSize: 20),
                 )
               : ListView(
                   children: snapshot.data!.map(
-                    (employee) {
-                      return ListTile(
-                        leading: const CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
-                        ),
-                        title: Text('Nombre: ${employee.name}'),
-                        subtitle: Text('RFC: ${employee.rfc}'),
-                        trailing: OutlinedButton(
-                          onPressed: () {
-                            //debugPrint(employee.rfc);
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return EmployeeProfile(employee: employee);
-                                },
-                              ),
-                            );
-                          },
-                          child: const Icon(Icons.arrow_forward_ios),
-                        ),
+                    (car) {
+                      return CardRequest(
+                        clientName: 'Jeremy',
+                        model: car.model,
+                        year: car.carYear,
+                        date: car.lastService,
+                        onPressedDetails: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return const ServiceDetails();
+                              },
+                            ),
+                          );
+                        },
                       );
                     },
                   ).toList(),
@@ -80,27 +74,32 @@ class _HomePageAdminState extends State<HomePageAdmin> {
               : ListView(
                   children: snapshot.data!.map(
                     (client) {
-                      return ListTile(
-                        leading: const CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
-                        ),
-                        title: Text('Nombre: ${client.name}'),
-                        subtitle: Text('Celular: ${client.cellphone}'),
-                        trailing: OutlinedButton(
-                          onPressed: () {
-                            debugPrint(client.name);
+                      return CardActualCar(
+                          clientName: 'Jeremy',
+                          licencePlates: 'JER-123',
+                          model: 'Kia Rio',
+                          year: '2011',
+                          date: '04-05-2023',
+                          status: 'Aceptado',
+                          paid: 'No',
+                          onPressedChangeStatus: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
-                                  return ClientProfile(client: client);
+                                  return const EditStatus();
                                 },
                               ),
                             );
                           },
-                          child: const Icon(Icons.arrow_forward_ios),
-                        ),
-                      );
+                          onPressedSeeDetails: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return const ServiceDetails();
+                                },
+                              ),
+                            );
+                          });
                     },
                   ).toList(),
                 );
@@ -108,18 +107,17 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       ),
     ),
   ];
-
-    void _onItemTapped(int index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page Admin'),
+        title: const Text('Home Page Employee'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -139,7 +137,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return const AdminProfile();
+                      return const HomePage();
                     },
                   ),
                 );
@@ -192,12 +190,12 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_add_check_sharp),
-            label: 'Empleados',
+            icon: Icon(Icons.cases_rounded),
+            label: 'Solicitudes',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Clientes',
+            icon: Icon(Icons.engineering),
+            label: 'Servicios Actuales',
           ),
         ],
         currentIndex: _selectedIndex,

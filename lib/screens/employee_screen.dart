@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import 'login_screen_client.dart';
 import '../classes/employee_class.dart';
 
 //Components
@@ -191,7 +191,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return const LoginScreen();
+                            return const LoginScreenClient();
                           },
                         ),
                       );
@@ -216,7 +216,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return const LoginScreen();
+                              return const LoginScreenClient();
                             },
                           ),
                         );

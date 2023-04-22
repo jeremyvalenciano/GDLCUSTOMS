@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../database.dart';
 import '../classes/client_class.dart';
-import 'login_screen.dart';
+import 'login_screen_client.dart';
+import 'package:proyectobd/screens/car_screen.dart';
 
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
@@ -86,22 +87,6 @@ class _ClientScreenState extends State<ClientScreen> {
                 keyboardType: TextInputType.phone,
               ),
               InputTextField(
-                controller: cityController,
-                labelText: 'Estado',
-                hintText: 'Ingrese su estado',
-                icon: const Icon(Icons.location_city),
-                maxLength: 30,
-                keyboardType: TextInputType.text,
-              ),
-              InputTextField(
-                controller: addressController,
-                labelText: 'Direccion',
-                hintText: 'Ingrese su direccion',
-                icon: const Icon(Icons.location_on),
-                maxLength: 30,
-                keyboardType: TextInputType.text,
-              ),
-              InputTextField(
                 controller: ageController,
                 labelText: 'Edad',
                 hintText: 'Ingrese su edad',
@@ -114,6 +99,14 @@ class _ClientScreenState extends State<ClientScreen> {
                 labelText: 'Fecha de nacimiento',
                 hintText: 'Ingrese su fecha de nacimiento',
                 icon: const Icon(Icons.calendar_today),
+                maxLength: 30,
+                keyboardType: TextInputType.text,
+              ),
+              InputTextField(
+                controller: cityController,
+                labelText: 'Estado',
+                hintText: 'Ingrese su estado',
+                icon: const Icon(Icons.location_city),
                 maxLength: 30,
                 keyboardType: TextInputType.text,
               ),
@@ -162,12 +155,12 @@ class _ClientScreenState extends State<ClientScreen> {
               Container(
                 padding: const EdgeInsets.only(top: 50, bottom: 50),
                 child: RoundedButton(
-                  text: 'Registrar',
+                  text: 'Siguiente',
                   btnColor: Colors.blue,
                   fontSize: 15,
                   textColor: Colors.white,
                   onPressed: () {
-                    dbHelper.insertClient(Client(
+                    final client = Client(
                       name: nameController.text,
                       email: emailController.text,
                       password: passwordController.text,
@@ -177,7 +170,16 @@ class _ClientScreenState extends State<ClientScreen> {
                       genre: _genderController.text,
                       city: cityController.text,
                       age: int.parse(ageController.text),
-                    ));
+                    );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return CarScreen(
+                            client: client,
+                          );
+                        },
+                      ),
+                    );
                   },
                 ),
               ),
@@ -198,7 +200,7 @@ class _ClientScreenState extends State<ClientScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return const LoginScreen();
+                              return const LoginScreenClient();
                             },
                           ),
                         );

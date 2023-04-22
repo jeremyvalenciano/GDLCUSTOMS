@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../classes/employee_class.dart';
+import '../classes/car_class.dart';
 import '../database.dart';
 
 final dbHelper = DatabaseHelper.instance;
@@ -16,34 +17,29 @@ class _AdminViewState extends State<AdminView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vista Admin de Empleados'),
+        title: const Text('Vista Admin de Empleados PRUEBAA'),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
-        child: FutureBuilder<List<Employee>>(
-          future: dbHelper.getEmployees(),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Employee>> snapshot) {
+        child: FutureBuilder<List<Car>>(
+          future: dbHelper.getCars(),
+          builder: (BuildContext context, AsyncSnapshot<List<Car>> snapshot) {
             if (!snapshot.hasData) {
               return const Text('Cargando...');
             }
             return snapshot.data!.isEmpty
                 ? const Text(
-                    'No hay empleados registrados',
+                    'No hay cars registrados',
                     style: TextStyle(fontSize: 20),
                   )
                 : ListView(
                     children: snapshot.data!.map(
-                      (employee) {
+                      (car) {
                         return ListTile(
-                          title: Text('RFC: ${employee.rfc}'),
+                          title: Text('CLientId: ${car.clientId}'),
                           subtitle: Text(
-                              'Nombre: ${employee.name} - Cel: ${employee.cellphone}'),
-                          onLongPress: () {
-                            setState(() {
-                              dbHelper.deleteEmployee(employee.rfc);
-                            });
-                          },
+                              'Modelo: ${car.model} - Servicio: ${car.lastService}'),
+                          onLongPress: () {},
                         );
                       },
                     ).toList(),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/admin/admin_login.dart';
+import 'package:proyectobd/admin/admin_view.dart';
+import 'package:proyectobd/employee/home_page_employee.dart';
+import 'package:proyectobd/screens/car_screen.dart';
 import 'package:proyectobd/screens/client_screen.dart';
 import 'package:proyectobd/screens/employee_screen.dart';
-import 'screens/login_screen.dart';
+import 'screens/login_screen_client.dart';
 //import 'select_user.dart';
 import 'database.dart';
 import 'package:proyectobd/components/rounded_button.dart';
@@ -52,7 +55,7 @@ class HomePage extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return const AdminLogin();
+                        return const LoginScreenClient();
                       },
                     ),
                   );

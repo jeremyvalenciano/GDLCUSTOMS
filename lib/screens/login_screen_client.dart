@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/client/home_page_client.dart';
+import 'package:proyectobd/components/rounded_button.dart';
 import '../select_user.dart';
 import '../database.dart';
 
@@ -7,31 +9,33 @@ final dbHelper = DatabaseHelper.instance;
 final emailController = TextEditingController();
 final passwordController = TextEditingController();
 //Validacion de email y de contraseña
-void submitLoginFormAdmin() async {
+Future submitLoginFormClient() async {
   // Get the email and password from the form fields
   final String email = emailController.text;
   final String password = passwordController.text;
 
   // Call the login method to check if the credentials are valid
-  final bool isLoggedIn = await dbHelper.loginAdmin(email, password);
+  final bool isLoggedIn = await dbHelper.loginClient(email, password);
 
   // If the credentials are valid, navigate to the next screen; otherwise,
   // show an error message
   if (isLoggedIn) {
     debugPrint('Login successful');
+    return true;
   } else {
     debugPrint('Login failed');
+    return false;
   }
 }
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginScreenClient extends StatefulWidget {
+  const LoginScreenClient({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreenClient> createState() => _LoginScreenClientState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenClientState extends State<LoginScreenClient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 15, bottom: 20),
+              margin: const EdgeInsets.only(top: 10, bottom: 10),
               child: const Text('Bienvenido de nuevo a \n         GDL Customs',
                   style: TextStyle(
                     fontSize: 20,
@@ -80,26 +84,51 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Container(
               padding: const EdgeInsets.only(top: 20, bottom: 40),
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.grey),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                      side: const BorderSide(color: Colors.grey, width: 2),
-                    ),
-                  ),
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    const EdgeInsets.symmetric(horizontal: 100, vertical: 20),
-                  ),
-                ),
-                onPressed: () async {
-                  submitLoginFormAdmin();
-                },
-                child: const Text('Iniciar Sesión',
-                    style: TextStyle(fontSize: 18, color: Colors.black)),
-              ),
+              child: RoundedButton(
+                  text: "Iniciar sesion",
+                  textColor: Colors.white,
+                  btnColor: Colors.blue,
+                  fontSize: 20,
+                  onPressed: () async {
+                    final bool isLoggedIn = await submitLoginFormClient();
+                    if (isLoggedIn) {
+                      if (mounted) {
+                        setState(() async {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Login Exitoso!'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 4),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          //Obtenemos el cliente por email
+                          final client = await dbHelper
+                              .getClientByEmail(emailController.text);
+                          if (mounted) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return HomePageClient(client: client);
+                                },
+                              ),
+                            );
+                          }
+                        });
+                      }
+                    } else {
+                      setState(() {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Usuario o contraseña incorrectos'),
+                            backgroundColor: Colors.red,
+                            duration: Duration(seconds: 4),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      });
+                    }
+                  }),
             ),
             const Center(
               child: Text(

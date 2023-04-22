@@ -34,7 +34,8 @@ class InputTextField extends StatelessWidget {
       controller: controller,
       maxLength: maxLength,
       obscureText: keyboardType == TextInputType.visiblePassword ? true : false,
-      onTap: () => labelText == 'Fecha de nacimiento'
+      onTap: () => labelText == 'Fecha de nacimiento' ||
+              labelText == 'Fecha de ultimo servicio'
           ? showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),

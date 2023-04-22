@@ -7,6 +7,10 @@ import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/database.dart';
 
 final dbHelper = DatabaseHelper.instance;
+Future getAdmin(String email) async {
+  final admin = await dbHelper.getAdminByEmail(email);
+  return admin;
+}
 
 class EmployeeProfile extends StatefulWidget {
   final Employee employee;
@@ -99,12 +103,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                               child: const Text("Eliminar"),
                               onPressed: () {
                                 dbHelper.deleteEmployee(widget.employee.rfc);
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const HomePageAdmin()),
-                                  (Route<dynamic> route) => false,
-                                );
+                                Navigator.pop(context);
                               },
                             ),
                           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/admin/home_page_admin.dart';
+import 'package:proyectobd/classes/admin_class.dart';
 import '../database.dart';
 
 final dbHelper = DatabaseHelper.instance;
@@ -24,6 +25,11 @@ Future submitLoginFormAdmin() async {
     debugPrint('Login failed');
     return false;
   }
+}
+
+Future<Admin?> getAdmin(String email) async {
+  final admin = await dbHelper.getAdminByEmail(email);
+  return admin;
 }
 
 //notification
@@ -114,28 +120,26 @@ class _AdminLoginState extends State<AdminLogin> {
                       });
                     }
                   } else {
-                    if (mounted) {
-                      setState(() {
-                        showDialog(
-                          context: myContext,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Error'),
-                              content: const Text(
-                                  'Usuario o contraseña incorrectos'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      });
-                    }
+                    setState(() {
+                      showDialog(
+                        context: myContext,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content:
+                                const Text('Usuario o contraseña incorrectos'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    });
                   }
                 },
                 child: const Text('Iniciar Sesión',
