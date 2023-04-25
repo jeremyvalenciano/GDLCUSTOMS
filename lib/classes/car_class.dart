@@ -1,4 +1,5 @@
 class Car {
+  int? id;
   int? clientId;
   String licencePlate;
   String model;
@@ -10,6 +11,7 @@ class Car {
   String lastService;
   int doors;
   Car({
+    this.id,
     this.clientId,
     required this.licencePlate,
     required this.model,
@@ -23,6 +25,7 @@ class Car {
   });
 
   factory Car.fromMap(Map<String, dynamic> json) => Car(
+        id: json["id"],
         clientId: json["clientId"],
         licencePlate: json["licencePlate"],
         model: json["model"],
@@ -35,6 +38,7 @@ class Car {
         doors: json["doors"],
       );
   Map<String, dynamic> toMap() => {
+        "id": id,
         "clientId": clientId,
         "licencePlate": licencePlate,
         "model": model,

@@ -296,17 +296,17 @@ class DatabaseHelper {
     return await db.insert('Cars', car.toMap());
   }
 
-  Future<int> deleteCar(int id) async {
+  Future<int> deleteCar(int? id) async {
     Database db = await instance.database;
     return await db.delete('Cars', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<List<Car>> getCarsByClientId(int clientId) async {
+  Future<List<Car>> getCarsByClientId(int? id) async {
     Database db = await instance.database;
     var result = await db.query(
       'Cars',
       where: 'clientId = ?',
-      whereArgs: [clientId],
+      whereArgs: [id],
     );
     List<Car> cars = result.isNotEmpty
         ? result.map((json) => Car.fromMap(json)).toList()

@@ -112,7 +112,7 @@ class _AdminLoginState extends State<AdminLogin> {
                   if (isLoggedIn) {
                     if (mounted) {
                       setState(() {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           myContext,
                           MaterialPageRoute(
                               builder: (context) => const HomePageAdmin()),

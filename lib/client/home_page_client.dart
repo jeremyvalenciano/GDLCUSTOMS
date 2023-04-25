@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/components/card_info_car.dart';
 import 'package:proyectobd/home_page.dart';
 import 'package:proyectobd/classes/client_class.dart';
-
-//gogle images search
+import 'package:proyectobd/classes/car_class.dart';
+import 'package:proyectobd/screens/add_one_car.dart' hide dbHelper;
+import 'package:proyectobd/client/client_profile_view.dart';
+import 'package:proyectobd/client/services_list_view.dart';
 
 class HomePageClient extends StatefulWidget {
   final Client client;
@@ -14,144 +17,11 @@ class HomePageClient extends StatefulWidget {
 
 class _HomePageClientState extends State<HomePageClient> {
   int _selectedIndex = 0;
+  late String emailClient;
+  late int? clientId;
+
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final List<Widget> _widgetOptions = <Widget>[
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
-          child: Text(
-            'Su Automovil',
-            style: TextStyle(
-              fontSize: 28.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Column(
-              children: const <Widget>[
-                Text(
-                  'Modelo',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text('Audi A4'),
-              ],
-            ),
-            Column(
-              children: const <Widget>[
-                Text(
-                  'Marca',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text('Audi'),
-              ],
-            ),
-            Column(
-              children: const <Widget>[
-                Text(
-                  'Año',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text('2019'),
-              ],
-            ),
-          ],
-        ),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.network(
-                  'https://www.topgear.com/sites/default/files/cars-car/image/2020/09/a203794_medium.jpg',
-                  width: 150.0,
-                  height: 150.0,
-                ),
-                const SizedBox(height: 16.0),
-                const Text(
-                  'Placas',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text('JSJ-1234'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(
-                      children: const <Widget>[
-                        Text(
-                          'KM Prox. Servicio',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text('25,000'),
-                      ],
-                    ),
-                    Column(
-                      children: const <Widget>[
-                        Text(
-                          'Kilometraje Actual',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text('10,000'),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        ButtonBar(
-          alignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                // Respond to button press
-              },
-              child: const Text('Ver Historial'),
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Ver Servicios'),
-            ),
-          ],
-        ),
-      ],
-    ),
-    const Text(
-      'Index 1: ss',
-      style: optionStyle,
-    ),
-    const Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    const Text(
-      'Index 4: ',
-      style: optionStyle,
-    ),
-    const Text(
-      'Index 4: a',
-      style: optionStyle,
-    ),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -161,6 +31,81 @@ class _HomePageClientState extends State<HomePageClient> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> widgetOptions = <Widget>[
+      //Scaffold de la lista de autos del cliente
+      Scaffold(
+        body: Container(
+          padding: const EdgeInsets.all(10),
+          child: FutureBuilder<List<Car>>(
+            future: dbHelper.getCarsByClientId(widget.client.id),
+            builder: (BuildContext context, AsyncSnapshot<List<Car>> snapshot) {
+              if (!snapshot.hasData) {
+                return const Text('Cargando...');
+              }
+              return snapshot.data!.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No hay Autos registrados',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    )
+                  : ListView(
+                      children: snapshot.data!.map(
+                        (car) {
+                          return ListTile(
+                            leading: const CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
+                            ),
+                            title: Text('Modelo: ${car.model}'),
+                            subtitle: Text('Marca: ${car.brand}'),
+                            trailing: OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return CardInfoCar(car: car);
+                                    },
+                                  ),
+                                );
+                              },
+                              child: const Icon(Icons.arrow_forward_ios),
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    );
+            },
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return AddOneCar(client: widget.client);
+                },
+              ),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation
+            .endFloat, // Coloca el botón en la posición deseada
+      ),
+      //Scaffold de la lista de servicios del cliente
+      ServicesListView(),
+      const Text(
+        'Index 2: School',
+        style: optionStyle,
+      ),
+      const Text(
+        'Index 4: ',
+        style: optionStyle,
+      ),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Client Home'),
@@ -169,9 +114,9 @@ class _HomePageClientState extends State<HomePageClient> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text('Admin'),
-              accountEmail: Text('a'),
-              currentAccountPicture: CircleAvatar(
+              accountName: Text(widget.client.name),
+              accountEmail: Text(widget.client.email),
+              currentAccountPicture: const CircleAvatar(
                 backgroundImage: NetworkImage(
                     'https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png'),
               ),
@@ -183,7 +128,7 @@ class _HomePageClientState extends State<HomePageClient> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return const HomePage();
+                      return ClientProfileView(client: widget.client);
                     },
                   ),
                 );
@@ -231,25 +176,21 @@ class _HomePageClientState extends State<HomePageClient> {
         ),
       ),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.car_repair),
-            label: 'Auto',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.payment),
-            label: 'Pagos',
+            label: 'Autos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.build),
             label: 'Servicios',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configuración',
+            icon: Icon(Icons.payment),
+            label: 'Pagos',
           ),
         ],
         currentIndex: _selectedIndex,
