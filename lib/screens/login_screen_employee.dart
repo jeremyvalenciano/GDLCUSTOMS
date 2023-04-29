@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/client/home_page_client.dart';
 import 'package:proyectobd/components/rounded_button.dart';
+import 'package:proyectobd/employee/home_page_employee.dart';
 import '../select_user.dart';
 import '../database.dart';
 
@@ -9,13 +10,13 @@ final dbHelper = DatabaseHelper.instance;
 final emailController = TextEditingController();
 final passwordController = TextEditingController();
 //Validacion de email y de contraseña
-Future submitLoginFormClient() async {
+Future submitLoginFormEmployee() async {
   // Get the email and password from the form fields
   final String email = emailController.text;
   final String password = passwordController.text;
 
   // Call the login method to check if the credentials are valid
-  final bool isLoggedIn = await dbHelper.loginClient(email, password);
+  final bool isLoggedIn = await dbHelper.loginEmployee(email, password);
 
   // If the credentials are valid, navigate to the next screen; otherwise,
   // show an error message
@@ -28,19 +29,19 @@ Future submitLoginFormClient() async {
   }
 }
 
-class LoginScreenClient extends StatefulWidget {
-  const LoginScreenClient({Key? key}) : super(key: key);
+class LoginScreenEmployee extends StatefulWidget {
+  const LoginScreenEmployee({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreenClient> createState() => _LoginScreenClientState();
+  State<LoginScreenEmployee> createState() => _LoginScreenEmployeeState();
 }
 
-class _LoginScreenClientState extends State<LoginScreenClient> {
+class _LoginScreenEmployeeState extends State<LoginScreenEmployee> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Cliente'),
+        title: const Text('Login de empleado'),
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -90,7 +91,7 @@ class _LoginScreenClientState extends State<LoginScreenClient> {
                   btnColor: Colors.blue,
                   fontSize: 20,
                   onPressed: () async {
-                    final bool isLoggedIn = await submitLoginFormClient();
+                    final bool isLoggedIn = await submitLoginFormEmployee();
                     if (isLoggedIn) {
                       if (mounted) {
                         setState(() async {
@@ -103,13 +104,13 @@ class _LoginScreenClientState extends State<LoginScreenClient> {
                             ),
                           );
                           //Obtenemos el cliente por email
-                          final client = await dbHelper
-                              .getClientByEmail(emailController.text);
+                          final employee = await dbHelper
+                              .getEmployeeByEmail(emailController.text);
                           if (mounted) {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
-                                  return HomePageClient(client: client);
+                                  return HomePageEmployee(employee: employee);
                                 },
                               ),
                             );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/home_page.dart';
 import 'login_screen_client.dart';
 import '../classes/employee_class.dart';
 
@@ -128,7 +129,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                 labelText: 'Edad',
                 hintText: 'Ingrese su edad',
                 icon: const Icon(Icons.numbers),
-                maxLength: 30,
+                maxLength: 2,
                 keyboardType: TextInputType.number,
               ),
               InputTextField(
@@ -188,10 +189,11 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         role: roleController.text,
                         fiscalRegime: fiscalRegimeController.text,
                       ));
-                      Navigator.of(context).push(
+
+                      Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return const LoginScreenClient();
+                            return const HomePage();
                           },
                         ),
                       );

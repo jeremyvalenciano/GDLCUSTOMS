@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/screens/client_screen.dart';
+import 'package:proyectobd/screens/login_screen_employee.dart';
+import 'package:proyectobd/screens/employee_screen.dart';
 
 import 'screens/login_screen_client.dart';
 //import 'select_user.dart';
@@ -45,7 +47,7 @@ class HomePage extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return const LoginScreenClient();
+                        return const LoginScreenEmployee();
                       },
                     ),
                   );

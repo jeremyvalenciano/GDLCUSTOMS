@@ -9,6 +9,7 @@ import 'package:proyectobd/client/services_list_view.dart';
 
 class HomePageClient extends StatefulWidget {
   final Client client;
+
   const HomePageClient({required this.client, super.key});
 
   @override
@@ -16,9 +17,8 @@ class HomePageClient extends StatefulWidget {
 }
 
 class _HomePageClientState extends State<HomePageClient> {
+  List<Car> clientCars = [];
   int _selectedIndex = 0;
-  late String emailClient;
-  late int? clientId;
 
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -27,6 +27,11 @@ class _HomePageClientState extends State<HomePageClient> {
     setState(() {
       _selectedIndex = index;
     });
+    getCarsByClientId();
+  }
+
+  void getCarsByClientId() async {
+    clientCars = await dbHelper.getCarsByClientId(widget.client.id);
   }
 
   @override
@@ -57,16 +62,18 @@ class _HomePageClientState extends State<HomePageClient> {
                           return ListTile(
                             leading: const CircleAvatar(
                               backgroundImage: NetworkImage(
-                                  'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
+                                  'https://media.istockphoto.com/id/1144092062/vector/car-flat-icon.jpg?s=170667a&w=0&k=20&c=4arjMU0azqnuGOQ39s5la9BnuQGj3pWC4ZKeF9atKLw='),
                             ),
                             title: Text('Modelo: ${car.model}'),
-                            subtitle: Text('Marca: ${car.brand}'),
+                            subtitle: Text(
+                                'Marca: ${car.brand} - Placas: ${car.licencePlate}'),
                             trailing: OutlinedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (BuildContext context) {
-                                      return CardInfoCar(car: car);
+                                      return CardInfoCar(
+                                          car: car, client: widget.client);
                                     },
                                   ),
                                 );
@@ -96,7 +103,11 @@ class _HomePageClientState extends State<HomePageClient> {
             .endFloat, // Coloca el botón en la posición deseada
       ),
       //Scaffold de la lista de servicios del cliente
-      ServicesListView(),
+
+      ServicesListView(
+        autos: clientCars,
+        client: widget.client,
+      ),
       const Text(
         'Index 2: School',
         style: optionStyle,
@@ -118,7 +129,7 @@ class _HomePageClientState extends State<HomePageClient> {
               accountEmail: Text(widget.client.email),
               currentAccountPicture: const CircleAvatar(
                 backgroundImage: NetworkImage(
-                    'https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png'),
+                    'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
               ),
             ),
             ListTile(
@@ -133,10 +144,6 @@ class _HomePageClientState extends State<HomePageClient> {
                   ),
                 );
               },
-            ),
-            const ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuracion'),
             ),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -190,7 +197,7 @@ class _HomePageClientState extends State<HomePageClient> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.payment),
-            label: 'Pagos',
+            label: 'Tickets',
           ),
         ],
         currentIndex: _selectedIndex,

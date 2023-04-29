@@ -5,6 +5,7 @@ import 'package:proyectobd/classes/admin_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/car_class.dart';
+import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -85,19 +86,57 @@ class DatabaseHelper {
           )
           ''');
     await db.execute('''
+          CREATE TABLE Requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            clientId INTEGER NOT NULL,
+            carId INTEGER NOT NULL,
+            employeeId INTEGER DEFAULT 0,
+            clientName TEXT NOT NULL,
+            modelCar TEXT NOT NULL,
+            brandCar TEXT NOT NULL,
+            licencePlate TEXT NOT NULL,
+            date TEXT NOT NULL,
+            status TEXT NOT NULL,
+            paid TEXT NOT NULL,
+            FOREIGN KEY (clientId) REFERENCES Clients(id),
+            FOREIGN KEY (employeeId) REFERENCES Employees(id),
+            FOREIGN KEY (carId) REFERENCES Cars(id)
+          )
+          ''');
+    await db.execute('''
           CREATE TABLE Services (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             clientId INTEGER NOT NULL,
             carId INTEGER NOT NULL,
+            requestId INTEGER NOT NULL,
             name TEXT NOT NULL,
-            description TEXT NOT NULL UNIQUE,
+            description TEXT NOT NULL,
             productsCost FLOAT DEFAULT 0,
             serviceCost FLOAT DEFAULT 0,
             finalCost FLOAT DEFAULT 0,
+            estimatedTime INT DEFAULT 0,
             FOREIGN KEY (clientId) REFERENCES Clients(id),
-            FOREIGN KEY (carId) REFERENCES Cars(id)
+            FOREIGN KEY (carId) REFERENCES Cars(id),
+            FOREIGN KEY (requestId) REFERENCES Requests(id)
           )
           ''');
+    await db.execute('''
+          CREATE TABLE Products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            carId INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            brand TEXT NOT NULL,
+            description TEXT NOT NULL,
+            quantity INT DEFAULT 0,
+            price FLOAT DEFAULT 0
+          )
+          ''');
+    /*await db.execute('''
+      CREATE TRIGGER insert_service AFTER INSERT ON Requests
+        BEGIN
+          INSERT INTO Service (service_name, service_date) VALUES ('service name', 'service date');
+        END;
+    ''');*/
   }
 
   //General functions
@@ -128,7 +167,7 @@ class DatabaseHelper {
   Future<Admin> getAdminByEmail(String email) async {
     Database db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(
-      '',
+      'AdministratorGDL',
       where: 'email= ?',
       whereArgs: [email],
     );
@@ -206,7 +245,7 @@ class DatabaseHelper {
 
     // Query the database for an admin user with the given email and password
     final List<Map<String, dynamic>> result = await db.query(
-      'CLients',
+      'Clients',
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],
     );
@@ -222,6 +261,30 @@ class DatabaseHelper {
         ? result.map((json) => Employee.fromMap(json)).toList()
         : [];
     return employees;
+  }
+
+  Future<int> insertEmployee(Employee employee) async {
+    Database db = await instance.database;
+    return await db.insert('Employees', employee.toMap());
+  }
+
+  Future<int> deleteEmployee(String rfc) async {
+    Database db = await instance.database;
+    return await db.delete('Employees', where: 'rfc = ?', whereArgs: [rfc]);
+  }
+
+  Future<bool> loginEmployee(String email, String password) async {
+    // Get a reference to the database
+    Database db = await instance.database;
+
+    // Query the database for an admin user with the given email and password
+    final List<Map<String, dynamic>> result = await db.query(
+      'Employees',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
+    // If we found a matching admin user, return true; otherwise, return false
+    return result.isNotEmpty;
   }
 
   Future<Employee> getEmployeeById(String rfc) async {
@@ -251,20 +314,46 @@ class DatabaseHelper {
     }
   }
 
-  Future<int> insertEmployee(Employee employee) async {
+  Future<Employee> getEmployeeByEmail(String email) async {
     Database db = await instance.database;
-    return await db.insert('Employees', employee.toMap());
-  }
-
-  Future<int> deleteEmployee(String rfc) async {
-    Database db = await instance.database;
-    return await db.delete('Employees', where: 'rfc = ?', whereArgs: [rfc]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Employees',
+      where: 'email= ?',
+      whereArgs: [email],
+    );
+    if (maps.isNotEmpty) {
+      return Employee(
+        id: maps.first['id'],
+        rfc: maps.first['rfc'],
+        password: maps.first['password'],
+        name: maps.first['name'],
+        cellphone: maps.first['cellphone'],
+        email: maps.first['email'],
+        address: maps.first['address'],
+        city: maps.first['city'],
+        genre: maps.first['genre'],
+        birthday: maps.first['birthday'],
+        age: maps.first['age'],
+        role: maps.first['role'],
+        fiscalRegime: maps.first['fiscalRegime'],
+      );
+    } else {
+      throw Exception('No se encontró el empleado con el email: $email');
+    }
   }
 
   //Service Functions
   Future<List<Service>> getServices() async {
     Database db = await instance.database;
     var result = await db.query('Services');
+    List<Service> services = result.isNotEmpty
+        ? result.map((json) => Service.fromMap(json)).toList()
+        : [];
+    return services;
+  }
+  Future<List<Service>> getServicesByRequestId(int id) async {
+    Database db = await instance.database;
+    var result = await db.query('Services', where: 'requestId = ?', whereArgs: [id]);
     List<Service> services = result.isNotEmpty
         ? result.map((json) => Service.fromMap(json)).toList()
         : [];
@@ -312,5 +401,84 @@ class DatabaseHelper {
         ? result.map((json) => Car.fromMap(json)).toList()
         : [];
     return cars;
+  }
+
+  Future<Car> getCarByLicencePlate(String licencePlate) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Cars',
+      where: 'licencePlate= ?',
+      whereArgs: [licencePlate],
+    );
+    if (maps.isNotEmpty) {
+      return Car(
+        id: maps.first['id'],
+        clientId: maps.first['clientId'],
+        licencePlate: maps.first['licencePlate'],
+        brand: maps.first['brand'],
+        type: maps.first['type'],
+        model: maps.first['model'],
+        carYear: maps.first['year'],
+        color: maps.first['color'],
+        kilometers: maps.first['kilometers'],
+        lastService: maps.first['lastService'],
+        doors: maps.first['doors'],
+      );
+    } else {
+      throw Exception('No se encontró el auto por las placas: $licencePlate');
+    }
+  }
+
+  //Request Functions
+  Future<int> insertRequest(ServiceRequest request) async {
+    Database db = await instance.database;
+    int id = await db.insert('Requests', request.toMap());
+    return id;
+  }
+
+  Future<List<ServiceRequest>> getRequests() async {
+    Database db = await instance.database;
+    var result = await db.query('Requests');
+    List<ServiceRequest> requests = result.isNotEmpty
+        ? result.map((json) => ServiceRequest.fromMap(json)).toList()
+        : [];
+    return requests;
+  }
+
+  Future<int> deleteRequest(int? id) async {
+    Database db = await instance.database;
+    return await db.delete('Requests', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> asignEmployeeIdToRequest(int id, int employeeId) async {
+    Database db = await instance.database;
+    await db.rawUpdate(
+        'UPDATE Requests SET employeeId = ? WHERE id = ?', [employeeId, id]);
+  }
+
+  Future<ServiceRequest> getRequestIdBylicence(String licencePlate) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Requests',
+      where: 'licencePlate= ?',
+      whereArgs: [licencePlate],
+    );
+    if (maps.isNotEmpty) {
+      return ServiceRequest(
+        id: maps.first["id"],
+        clientId: maps.first["clientId"],
+        carId: maps.first["carId"],
+        clientName: maps.first["clientName"],
+        modelCar: maps.first["modelCar"],
+        brandCar: maps.first["brandCar"],
+        licencePlate: maps.first["licencePlate"],
+        date: maps.first["date"],
+        status: maps.first["status"],
+        paid: maps.first["paid"],
+      );
+    } else {
+      throw Exception(
+          'No se encontró la request con las placas: $licencePlate');
+    }
   }
 }

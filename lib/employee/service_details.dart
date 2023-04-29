@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/components/rounded_button.dart';
+import 'package:proyectobd/classes/service_class.dart';
+import 'package:proyectobd/database.dart';
 
 class ServiceDetails extends StatefulWidget {
-  const ServiceDetails({super.key});
+  final int? clientId;
+  final int? requestId;
+  const ServiceDetails({this.clientId, this.requestId, super.key});
 
   @override
   State<ServiceDetails> createState() => _ServiceDetailsState();
 }
 
 class _ServiceDetailsState extends State<ServiceDetails> {
+  List<Service> requestServices = [];
+  final dbHelper = DatabaseHelper.instance;
+
+  void getServicesByRequestId() async {
+    requestServices = await dbHelper.getServicesByRequestId(widget.requestId!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

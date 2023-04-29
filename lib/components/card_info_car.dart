@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/admin/admin_login.dart';
-import '../classes/car_class.dart';
+import 'package:proyectobd/components/rounded_button.dart';
+import 'package:proyectobd/classes/car_class.dart';
+import 'package:proyectobd/classes/client_class.dart';
+import 'package:proyectobd/client/home_page_client.dart';
 
 class CardInfoCar extends StatefulWidget {
   final Car car;
-  const CardInfoCar({required this.car, super.key});
+  final Client client;
+  const CardInfoCar({required this.car, required this.client, super.key});
 
   @override
   State<CardInfoCar> createState() => _CardInfoCarState();
@@ -39,6 +43,7 @@ class _CardInfoCarState extends State<CardInfoCar> {
                     'Modelo',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 20,
                     ),
                   ),
                   Text(widget.car.model),
@@ -50,6 +55,7 @@ class _CardInfoCarState extends State<CardInfoCar> {
                     'Marca',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 20,
                     ),
                   ),
                   Text(widget.car.brand),
@@ -61,6 +67,7 @@ class _CardInfoCarState extends State<CardInfoCar> {
                     'Año',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      fontSize: 20,
                     ),
                   ),
                   Text(widget.car.carYear),
@@ -72,11 +79,10 @@ class _CardInfoCarState extends State<CardInfoCar> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.network(
-                'https://www.topgear.com/sites/default/files/cars-car/image/2020/09/a203794_medium.jpg',
-                width: 150.0,
-                height: 150.0,
+                'https://img.remediosdigitales.com/58a8da/2020-mazda-mx-5-updates-10-1/450_1000.jpg',
+                width: 325.0,
+                height: 325.0,
               ),
-              const SizedBox(height: 16.0),
               const Text(
                 'Placas',
                 style: TextStyle(
@@ -92,9 +98,10 @@ class _CardInfoCarState extends State<CardInfoCar> {
                   Column(
                     children: <Widget>[
                       const Text(
-                        'Kilometraje al Ingreso',
+                        'Kilometraje',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                       Text('${widget.car.kilometers}'),
@@ -103,9 +110,10 @@ class _CardInfoCarState extends State<CardInfoCar> {
                   Column(
                     children: <Widget>[
                       const Text(
-                        'Fecha ultimo servicio',
+                        'Ultimo servicio',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
                       ),
                       Text(widget.car.lastService),
@@ -115,22 +123,40 @@ class _CardInfoCarState extends State<CardInfoCar> {
               ),
             ],
           ),
-          ButtonBar(
-            alignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  // Respond to button press
-                },
-                child: const Text('Editar'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  dbHelper.deleteCar(widget.car.id);
-                },
-                child: const Text('Eliminar'),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(top: 25.0),
+            child: ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RoundedButton(
+                    text: 'Editar',
+                    textColor: Colors.white,
+                    btnColor: Colors.blue,
+                    fontSize: 18,
+                    onPressed: () {}),
+                const SizedBox(
+                  width: 10,
+                  height: 25,
+                ),
+                RoundedButton(
+                    text: 'Eliminar',
+                    textColor: Colors.white,
+                    btnColor: Colors.red,
+                    fontSize: 18,
+                    onPressed: () {
+                      dbHelper.deleteCar(widget.car.id);
+                      if (mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return HomePageClient(client: widget.client);
+                            },
+                          ),
+                        );
+                      }
+                    }),
+              ],
+            ),
           ),
         ],
       ),

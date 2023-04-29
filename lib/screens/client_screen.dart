@@ -67,7 +67,7 @@ class _ClientScreenState extends State<ClientScreen> {
                 labelText: 'Correo',
                 hintText: 'Ingrese su correo',
                 icon: const Icon(Icons.email),
-                maxLength: 40,
+                maxLength: 35,
                 keyboardType: TextInputType.text,
               ),
               InputTextField(
@@ -91,7 +91,7 @@ class _ClientScreenState extends State<ClientScreen> {
                 labelText: 'Edad',
                 hintText: 'Ingrese su edad',
                 icon: const Icon(Icons.numbers),
-                maxLength: 30,
+                maxLength: 2,
                 keyboardType: TextInputType.number,
               ),
               InputTextField(
@@ -99,7 +99,7 @@ class _ClientScreenState extends State<ClientScreen> {
                 labelText: 'Fecha de nacimiento',
                 hintText: 'Ingrese su fecha de nacimiento',
                 icon: const Icon(Icons.calendar_today),
-                maxLength: 30,
+                maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
               InputTextField(
@@ -107,7 +107,7 @@ class _ClientScreenState extends State<ClientScreen> {
                 labelText: 'Estado',
                 hintText: 'Ingrese su estado',
                 icon: const Icon(Icons.location_city),
-                maxLength: 30,
+                maxLength: 20,
                 keyboardType: TextInputType.text,
               ),
               TextField(
@@ -120,7 +120,7 @@ class _ClientScreenState extends State<ClientScreen> {
                   hintText: 'Ingrese su direccion',
                   prefixIcon: Icon(Icons.location_on),
                 ),
-                maxLength: 20,
+                maxLength: 40,
                 textInputAction: TextInputAction
                     .done, // Acción que se realiza al presionar la tecla de retorno
                 keyboardType: TextInputType

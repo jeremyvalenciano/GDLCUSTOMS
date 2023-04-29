@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/classes/employee_class.dart';
+import 'package:proyectobd/employee/home_page_employee.dart';
 
 class CardRequest extends StatelessWidget {
+  final Employee employee;
+  final int? requestId;
+  final int? employeeId;
   final String clientName;
+  final String brandCar;
   final String model;
-  final String year;
+  final String licencePlates;
+
   final String date;
   final VoidCallback onPressedDetails;
   const CardRequest(
-      {required this.clientName,
+      {this.requestId,
+      this.employeeId,
+      required this.employee,
+      required this.clientName,
+      required this.brandCar,
       required this.model,
-      required this.year,
+      required this.licencePlates,
       required this.date,
       required this.onPressedDetails,
       super.key});
@@ -27,7 +38,7 @@ class CardRequest extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     backgroundImage: NetworkImage(
-                      'https://via.placeholder.com/150',
+                      'https://static.vecteezy.com/system/resources/previews/007/033/146/original/profile-icon-login-head-icon-vector.jpg',
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -51,7 +62,14 @@ class CardRequest extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          model,
+                          '$brandCar $model',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          licencePlates,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -85,7 +103,12 @@ class CardRequest extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    dbHelper.asignEmployeeIdToRequest(requestId!, employee.id!);
+                    debugPrint('Se asignó el empleado a la petición');
+                    debugPrint('employeeId: ${employee.id!}');
+                    debugPrint('requestId: ${requestId!}');
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),
                   ),
@@ -93,7 +116,38 @@ class CardRequest extends StatelessWidget {
                       style: TextStyle(color: Colors.white)),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Eliminar petición"),
+                          content: const Text(
+                              "¿Está seguro de que desea eliminar la petición?"),
+                          actions: [
+                            TextButton(
+                              child: const Text("Cancelar"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text("Si, eliminar"),
+                              onPressed: () {
+                                dbHelper.deleteRequest(requestId!);
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePageEmployee(employee: employee)),
+                                  (Route<dynamic> route) => false,
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.red),
                   ),

@@ -1,6 +1,7 @@
 //Class Employee
 
 class Employee {
+  int? id;
   String rfc;
   String name;
   String email;
@@ -15,6 +16,7 @@ class Employee {
   String fiscalRegime;
 
   Employee({
+    this.id,
     required this.rfc,
     required this.name,
     required this.email,
@@ -29,6 +31,7 @@ class Employee {
     required this.fiscalRegime,
   });
   factory Employee.fromMap(Map<String, dynamic> json) => Employee(
+        id: json["id"],
         rfc: json["rfc"],
         name: json["name"],
         email: json["email"],
@@ -44,6 +47,7 @@ class Employee {
       );
 
   Map<String, dynamic> toMap() => {
+        "id": id,
         "rfc": rfc,
         "name": name,
         "email": email,

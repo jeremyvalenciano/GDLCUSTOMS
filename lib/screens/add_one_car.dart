@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/client/home_page_client.dart';
 import '../database.dart';
 import '../classes/car_class.dart';
 import '../classes/client_class.dart';
@@ -59,15 +60,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 labelText: 'Placas de su auto',
                 hintText: 'Ingrese sus placas',
                 icon: const Icon(Icons.drive_eta),
-                maxLength: 40,
-                keyboardType: TextInputType.text,
-              ),
-              InputTextField(
-                controller: modelController,
-                labelText: 'Modelo de su auto',
-                hintText: 'Ingrese modelo de su auto',
-                icon: const Icon(Icons.drive_eta),
-                maxLength: 40,
+                maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
               InputTextField(
@@ -79,27 +72,35 @@ class _AddOneCarState extends State<AddOneCar> {
                 keyboardType: TextInputType.text,
               ),
               InputTextField(
-                controller: yearController,
-                labelText: 'Año de su auto',
-                hintText: 'Ingrese año de su auto',
+                controller: modelController,
+                labelText: 'Modelo de su auto',
+                hintText: 'Ingrese modelo de su auto',
                 icon: const Icon(Icons.drive_eta),
-                maxLength: 10,
-                keyboardType: TextInputType.phone,
+                maxLength: 15,
+                keyboardType: TextInputType.text,
               ),
               InputTextField(
                 controller: typeController,
                 labelText: 'Tipo de auto',
                 hintText: 'Ingrese el tipo de auto',
                 icon: const Icon(Icons.drive_eta),
-                maxLength: 30,
+                maxLength: 15,
                 keyboardType: TextInputType.text,
+              ),
+              InputTextField(
+                controller: yearController,
+                labelText: 'Año de su auto',
+                hintText: 'Ingrese año de su auto',
+                icon: const Icon(Icons.drive_eta),
+                maxLength: 4,
+                keyboardType: TextInputType.phone,
               ),
               InputTextField(
                 controller: doorsController,
                 labelText: 'Numero de puertas',
                 hintText: 'Ingrese el numero de puertas',
                 icon: const Icon(Icons.numbers),
-                maxLength: 30,
+                maxLength: 1,
                 keyboardType: TextInputType.phone,
               ),
               InputTextField(
@@ -107,7 +108,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 labelText: 'Color de auto',
                 hintText: 'Ingrese el color de su auto',
                 icon: const Icon(Icons.color_lens),
-                maxLength: 30,
+                maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
               InputTextField(
@@ -115,7 +116,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 labelText: 'Kilometraje',
                 hintText: 'Ingrese su kilometraje',
                 icon: const Icon(Icons.numbers),
-                maxLength: 30,
+                maxLength: 6,
                 keyboardType: TextInputType.phone,
               ),
               InputTextField(
@@ -123,7 +124,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 labelText: 'Fecha de ultimo servicio',
                 hintText: 'Ingrese su fecha de ultimo servicio',
                 icon: const Icon(Icons.calendar_today),
-                maxLength: 30,
+                maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
               Container(
@@ -149,6 +150,15 @@ class _AddOneCarState extends State<AddOneCar> {
                       lastService: lastServiceController.text,
                     ));
                     debugPrint('Car registered');
+                    if (mounted) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return HomePageClient(client: widget.client);
+                          },
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
