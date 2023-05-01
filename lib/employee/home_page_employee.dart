@@ -59,12 +59,14 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
                           date: request.date,
                           requestId: request.id,
                           employeeId: widget.employee.id,
-                          onPressedDetails: () {
+                          onPressedDetails: () async {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
                                   return ServiceDetails(
-                                      clientId: request.clientId);
+                                    clientId: request.clientId,
+                                    requestId: request.id,
+                                  );
                                 },
                               ),
                             );

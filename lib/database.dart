@@ -239,6 +239,31 @@ class DatabaseHelper {
     }
   }
 
+  Future<Client> getClientById(int id) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Clients',
+      where: 'id= ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Client(
+        id: maps.first['id'],
+        email: maps.first['email'],
+        password: maps.first['password'],
+        name: maps.first['name'],
+        cellphone: maps.first['cellphone'],
+        birthday: maps.first['birthday'],
+        address: maps.first['address'],
+        genre: maps.first['genre'],
+        city: maps.first['city'],
+        age: maps.first['age'],
+      );
+    } else {
+      throw Exception('No se encontró el cliente con el id: $id');
+    }
+  }
+
   Future<bool> loginClient(String email, String password) async {
     // Get a reference to the database
     Database db = await instance.database;
@@ -351,9 +376,11 @@ class DatabaseHelper {
         : [];
     return services;
   }
-  Future<List<Service>> getServicesByRequestId(int id) async {
+
+  Future<List<Service>> getServicesByRequestId(int requestId) async {
     Database db = await instance.database;
-    var result = await db.query('Services', where: 'requestId = ?', whereArgs: [id]);
+    var result = await db
+        .query('Services', where: 'requestId = ?', whereArgs: [requestId]);
     List<Service> services = result.isNotEmpty
         ? result.map((json) => Service.fromMap(json)).toList()
         : [];

@@ -36,6 +36,7 @@ class _HomePageClientState extends State<HomePageClient> {
 
   @override
   Widget build(BuildContext context) {
+    getCarsByClientId();
     final List<Widget> widgetOptions = <Widget>[
       //Scaffold de la lista de autos del cliente
       Scaffold(
