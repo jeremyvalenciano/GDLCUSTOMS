@@ -96,7 +96,7 @@ class DatabaseHelper {
             brandCar TEXT NOT NULL,
             licencePlate TEXT NOT NULL,
             date TEXT NOT NULL,
-            status TEXT NOT NULL,
+            status TEXT DEFAULT 'Revision',
             paid TEXT NOT NULL,
             FOREIGN KEY (clientId) REFERENCES Clients(id),
             FOREIGN KEY (employeeId) REFERENCES Employees(id),
@@ -465,7 +465,8 @@ class DatabaseHelper {
 
   Future<List<ServiceRequest>> getRequests() async {
     Database db = await instance.database;
-    var result = await db.query('Requests');
+    var result = await db
+        .query('Requests', where: 'status = ?', whereArgs: ['Pendiente']);
     List<ServiceRequest> requests = result.isNotEmpty
         ? result.map((json) => ServiceRequest.fromMap(json)).toList()
         : [];
@@ -481,6 +482,8 @@ class DatabaseHelper {
     Database db = await instance.database;
     await db.rawUpdate(
         'UPDATE Requests SET employeeId = ? WHERE id = ?', [employeeId, id]);
+    await db.rawUpdate(
+        'UPDATE Requests SET status = ? WHERE id = ?', ['Aceptado', id]);
   }
 
   Future<ServiceRequest> getRequestIdBylicence(String licencePlate) async {
@@ -507,5 +510,15 @@ class DatabaseHelper {
       throw Exception(
           'No se encontró la request con las placas: $licencePlate');
     }
+  }
+
+  Future<List<ServiceRequest>> getRequestsByEmployeeId(int employeeId) async {
+    Database db = await instance.database;
+    var result = await db
+        .query('Requests', where: 'employeeId = ?', whereArgs: [employeeId]);
+    List<ServiceRequest> requests = result.isNotEmpty
+        ? result.map((json) => ServiceRequest.fromMap(json)).toList()
+        : [];
+    return requests;
   }
 }

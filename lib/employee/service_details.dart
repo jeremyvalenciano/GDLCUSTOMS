@@ -149,15 +149,23 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                         AsyncSnapshot<List<Service>> snapshot) {
                       if (snapshot.hasData) {
                         List<Service> services = snapshot.data!;
+                        int total = 0;
                         return ListView.builder(
                           itemCount: services.length,
                           itemBuilder: (BuildContext context, int index) {
                             Service service = services[index];
                             return Card(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(service.name),
                                   Text(service.description),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(service.serviceCost.toString()),
+                                    ],
+                                  ),
                                   // etc.
                                 ],
                               ),

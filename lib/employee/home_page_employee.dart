@@ -80,27 +80,29 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
       ),
       Container(
         padding: const EdgeInsets.all(10),
-        child: FutureBuilder<List<Employee>>(
-          future: dbHelper.getEmployees(),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Employee>> snapshot) {
+        child: FutureBuilder<List<ServiceRequest>>(
+          future: dbHelper.getRequestsByEmployeeId(widget.employee.id!),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<ServiceRequest>> snapshot) {
             if (!snapshot.hasData) {
               return const Text('Cargando...');
             }
             return snapshot.data!.isEmpty
-                ? const Text(
-                    'No hay Clientes registrados',
-                    style: TextStyle(fontSize: 20),
+                ? const Center(
+                    child: Text(
+                      'No hay Servicios en los que estes trabajando actualmente',
+                      style: TextStyle(fontSize: 20),
+                    ),
                   )
                 : ListView(
                     children: snapshot.data!.map(
-                      (client) {
+                      (request) {
                         return CardActualCar(
-                            clientName: 'Jeremy Valenciano',
-                            licencePlates: 'JHL-6631',
-                            model: 'Mazda MX-5',
+                            clientName: request.clientName,
+                            licencePlates: request.licencePlate,
+                            model: request.status,
                             year: '2020',
-                            date: '04-05-2023',
+                            date: request.date,
                             status: 'Aceptado',
                             paid: 'No',
                             onPressedChangeStatus: () {

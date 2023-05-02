@@ -197,7 +197,7 @@ class _ServicesListViewState extends State<ServicesListView> {
                 modelCar: widget.autoSelected!.model,
                 brandCar: widget.autoSelected!.brand,
                 licencePlate: widget.autoSelected!.licencePlate,
-                status: 'En revisión',
+                status: 'Pendiente',
                 date: DateTime.now().toString().split('.')[0],
                 paid: 'No'));
             int idNormal;

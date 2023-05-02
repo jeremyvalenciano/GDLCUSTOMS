@@ -108,6 +108,12 @@ class CardRequest extends StatelessWidget {
                     debugPrint('Se asignó el empleado a la petición');
                     debugPrint('employeeId: ${employee.id!}');
                     debugPrint('requestId: ${requestId!}');
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              HomePageEmployee(employee: employee)),
+                      (Route<dynamic> route) => false,
+                    );
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),
