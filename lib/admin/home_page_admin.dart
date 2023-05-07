@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyectobd/admin/admin_profile.dart';
 import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
+import 'package:proyectobd/classes/admin_class.dart';
 import 'package:proyectobd/database.dart';
 import 'package:proyectobd/admin/employee_profile.dart';
 import 'package:proyectobd/admin/client_profile.dart';
@@ -10,7 +11,8 @@ import 'package:proyectobd/home_page.dart';
 final dbHelper = DatabaseHelper.instance;
 
 class HomePageAdmin extends StatefulWidget {
-  const HomePageAdmin({Key? key}) : super(key: key);
+  
+  const HomePageAdmin({ Key? key}) : super(key: key);
 
   @override
   State<HomePageAdmin> createState() => _HomePageAdminState();
@@ -108,17 +110,18 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     ),
   ];
 
-    void _onItemTapped(int index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page Admin'),
+        title: const Text('Menu de Administrador'),
+        backgroundColor: Colors.green.shade400,
       ),
       drawer: Drawer(
         child: ListView(
@@ -200,7 +203,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.green.shade800,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),

@@ -42,6 +42,7 @@ class _LoginScreenEmployeeState extends State<LoginScreenEmployee> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login de empleado'),
+        backgroundColor: Colors.blue.shade600,
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -49,7 +50,7 @@ class _LoginScreenEmployeeState extends State<LoginScreenEmployee> {
           children: [
             Container(
               margin: const EdgeInsets.only(top: 10, bottom: 10),
-              child: const Text('Bienvenido de nuevo a \n         GDL Customs',
+              child: const Text('Bienvenido de nuevo a \n       GDL CUSTOMS',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -133,7 +134,7 @@ class _LoginScreenEmployeeState extends State<LoginScreenEmployee> {
             ),
             const Center(
               child: Text(
-                'No Tienes cuenta?',
+                'No tienes cuenta?',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),

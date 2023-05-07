@@ -5,6 +5,13 @@ import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+
+String fechaActual() {
+  var now = DateTime.now();
+  var formatter = DateFormat('dd/MM/yyyy');
+  return formatter.format(now);
+}
 
 class ServicesListView extends StatefulWidget {
   List<Car> autos;
@@ -33,12 +40,12 @@ class _ServicesListViewState extends State<ServicesListView> {
     Service(
         name: 'Cambio de Aceite y Filtro',
         description: 'Cambio de aceite y filtro para el automovil',
-        serviceCost: 500.0,
+        serviceCost: 900.0,
         estimatedTime: 60),
     Service(
         name: 'Cambio de Bujias ',
         description: 'Cambio de bujias para el automovil',
-        serviceCost: 400.0,
+        serviceCost: 300.0,
         estimatedTime: 40),
     Service(
         name: 'Cambio de Frenos',
@@ -48,17 +55,17 @@ class _ServicesListViewState extends State<ServicesListView> {
     Service(
         name: 'Alineacion y Balanceo',
         description: 'Alineacion y Balanceo para el automovil',
-        serviceCost: 500.0,
+        serviceCost: 300.0,
         estimatedTime: 60),
     Service(
         name: 'Cambio de Amortiguadores',
         description: 'Cambio de Amortiguadores para el automovil',
-        serviceCost: 40.0,
+        serviceCost: 4000.0,
         estimatedTime: 120),
     Service(
         name: 'Cambio de Clutch',
         description: 'Cambio de Clutch para el automovil',
-        serviceCost: 1200.0,
+        serviceCost: 2000.0,
         estimatedTime: 150),
     Service(
         name: 'Detallado General',
@@ -198,7 +205,7 @@ class _ServicesListViewState extends State<ServicesListView> {
                 brandCar: widget.autoSelected!.brand,
                 licencePlate: widget.autoSelected!.licencePlate,
                 status: 'Pendiente',
-                date: DateTime.now().toString().split('.')[0],
+                date: fechaActual(),
                 paid: 'No'));
             int idNormal;
             idRequest.then((value) {

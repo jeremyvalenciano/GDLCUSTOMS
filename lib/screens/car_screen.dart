@@ -34,6 +34,7 @@ class _CarScreenState extends State<CarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro de Auto'),
+        backgroundColor: Colors.orange.shade600,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -59,7 +60,7 @@ class _CarScreenState extends State<CarScreen> {
                 controller: licencePlateController,
                 labelText: 'Placas de su auto',
                 hintText: 'Ingrese sus placas',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.eight_k_plus_sharp),
                 maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
@@ -67,7 +68,7 @@ class _CarScreenState extends State<CarScreen> {
                 controller: brandController,
                 labelText: 'Marca de su auto',
                 hintText: 'Ingrese marca de su auto',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.format_color_text),
                 maxLength: 15,
                 keyboardType: TextInputType.text,
               ),
@@ -83,7 +84,7 @@ class _CarScreenState extends State<CarScreen> {
                 controller: typeController,
                 labelText: 'Tipo de auto',
                 hintText: 'Ingrese el tipo de auto',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.toys_sharp),
                 maxLength: 15,
                 keyboardType: TextInputType.text,
               ),
@@ -91,7 +92,7 @@ class _CarScreenState extends State<CarScreen> {
                 controller: yearController,
                 labelText: 'Año de su auto',
                 hintText: 'Ingrese año de su auto',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.calendar_today),
                 maxLength: 4,
                 keyboardType: TextInputType.phone,
               ),
@@ -115,7 +116,7 @@ class _CarScreenState extends State<CarScreen> {
                 controller: kilometersController,
                 labelText: 'Kilometraje',
                 hintText: 'Ingrese su kilometraje',
-                icon: const Icon(Icons.numbers),
+                icon: const Icon(Icons.do_not_disturb_on_outlined),
                 maxLength: 6,
                 keyboardType: TextInputType.phone,
               ),

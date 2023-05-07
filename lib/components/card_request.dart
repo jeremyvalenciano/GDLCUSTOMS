@@ -13,6 +13,7 @@ class CardRequest extends StatelessWidget {
 
   final String date;
   final VoidCallback onPressedDetails;
+  final VoidCallback onUpdateRequestList;
   const CardRequest(
       {this.requestId,
       this.employeeId,
@@ -23,6 +24,7 @@ class CardRequest extends StatelessWidget {
       required this.licencePlates,
       required this.date,
       required this.onPressedDetails,
+      required this.onUpdateRequestList,
       super.key});
 
   @override
@@ -108,12 +110,7 @@ class CardRequest extends StatelessWidget {
                     debugPrint('Se asignó el empleado a la petición');
                     debugPrint('employeeId: ${employee.id!}');
                     debugPrint('requestId: ${requestId!}');
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              HomePageEmployee(employee: employee)),
-                      (Route<dynamic> route) => false,
-                    );
+                    onUpdateRequestList();
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),

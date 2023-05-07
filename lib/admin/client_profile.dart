@@ -29,6 +29,7 @@ class _ClientProfileState extends State<ClientProfile> {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.9,
           color: Colors.black,
           padding:
               const EdgeInsets.only(top: 0, left: 25, right: 25, bottom: 25),

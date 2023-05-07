@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/components/service_element.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/database.dart';
 
+Future<void> dialNumber(String phoneNumber) async {
+  final Uri launchUri = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
+  await launchUrl(launchUri);
+}
+
 class ServiceDetails extends StatefulWidget {
   final int? clientId;
   final int? requestId;
+
   const ServiceDetails({this.clientId, this.requestId, super.key});
 
   @override
@@ -23,6 +33,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   String clientEmail = '';
   String clientAddress = '';
   String clientCity = '';
+  double total = 0;
 
   getClientById() async {
     Future<Client> futureClient = dbHelper.getClientById(widget.clientId!);
@@ -41,6 +52,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     futureServices.then((services) {
       setState(() {
         this.services = services;
+        for (var service in services) {
+          total += service.serviceCost;
+        }
       });
     });
   }
@@ -49,6 +63,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   void initState() {
     super.initState();
     getClientById();
+    getServiceByRequestId();
   }
 
   @override
@@ -132,78 +147,83 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 const Text('Servicios solicitados: ',
                     style:
                         TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, right: 10),
+                  child: SizedBox(
+                    height: 200,
+                    child: FutureBuilder<List<Service>>(
+                      future:
+                          dbHelper.getServicesByRequestId(widget.requestId!),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Service>> snapshot) {
+                        if (snapshot.hasData) {
+                          List<Service> services = snapshot.data!;
+                          return ListView.builder(
+                            itemCount: services.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Service service = services[index];
+
+                              return Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(service.name),
+                                      Text(service.description),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(service.serviceCost.toString()),
+                                        ],
+                                      ),
+                                      // etc.
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      },
+                    ),
+                  ),
+                ),
                 const Divider(
                   color: Colors.grey,
                   thickness: 0.8,
                   indent: 8,
                   endIndent: 8,
                 ),
-                const SizedBox(
-                  height: 40,
-                ),
-                SizedBox(
-                  height: 200,
-                  child: FutureBuilder<List<Service>>(
-                    future: dbHelper.getServicesByRequestId(widget.requestId!),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Service>> snapshot) {
-                      if (snapshot.hasData) {
-                        List<Service> services = snapshot.data!;
-                        int total = 0;
-                        return ListView.builder(
-                          itemCount: services.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            Service service = services[index];
-                            return Card(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(service.name),
-                                  Text(service.description),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(service.serviceCost.toString()),
-                                    ],
-                                  ),
-                                  // etc.
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 12, right: 20, left: 20, bottom: 35),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total: ',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(total.toString()),
+                    ],
                   ),
                 ),
                 Center(
                   child: RoundedButton(
-                      text: 'Contactar',
-                      textColor: Colors.black,
-                      btnColor: Colors.yellow,
-                      fontSize: 24,
-                      onPressed: () {
-                        debugPrint('idRequest ${widget.requestId}');
-                        /*Future ser = dbHelper
-                              .getServicesByRequestId(widget.requestId!);
-                          ser.then((value) {
-                            for (var i = 0; i < value.length; i++) {
-                              debugPrint(value[i].name);
-                            }
-                          });*/
-                        /*debugPrint(services.length.toString());
-                          for (var i = 0; i < services.length; i++) {
-                            debugPrint(services[i].name);
-                          }*/
-                        /*getServicesByRequestId();
-                          debugPrint(requestServices[0].clientId.toString());
-                          debugPrint(requestServices[0].name);
-                          debugPrint(requestServices[0].description);*/
-                      }),
+                    text: 'Llamar',
+                    textColor: Colors.black,
+                    btnColor: Colors.yellow,
+                    fontSize: 15,
+                    onPressed: () {
+                      dialNumber(clientPhone);
+                    },
+                  ),
                 )
               ],
             ),

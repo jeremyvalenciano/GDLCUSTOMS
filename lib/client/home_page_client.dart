@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/components/card_info_car.dart';
+import 'package:proyectobd/components/ticket_info_view.dart';
 import 'package:proyectobd/home_page.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/car_class.dart';
+import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/screens/add_one_car.dart' hide dbHelper;
-import 'package:proyectobd/client/client_profile_view.dart';
+import 'package:proyectobd/client/client_profile_view.dart' hide dbHelper;
 import 'package:proyectobd/client/services_list_view.dart';
 
 class HomePageClient extends StatefulWidget {
@@ -109,18 +111,69 @@ class _HomePageClientState extends State<HomePageClient> {
         autos: clientCars,
         client: widget.client,
       ),
-      const Text(
-        'Index 2: School',
-        style: optionStyle,
-      ),
-      const Text(
-        'Index 4: ',
-        style: optionStyle,
+      //Scaffold de la lista de tickets del cliente
+      Scaffold(
+        body: Container(
+          padding: const EdgeInsets.all(10),
+          child: FutureBuilder<List<Ticket>>(
+            future: dbHelper.getTicketsByClientId(widget.client.id!),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Ticket>> snapshot) {
+              if (!snapshot.hasData) {
+                return const Text('Cargando...');
+              }
+              return snapshot.data!.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No hay Tickets registrados',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    )
+                  : ListView(
+                      children: snapshot.data!.map(
+                        (ticket) {
+                          return ListTile(
+                            leading: const CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  'https://static.vecteezy.com/system/resources/previews/002/205/928/non_2x/payment-invoice-icon-free-vector.jpg'),
+                            ),
+                            title: Text('Folio: ${ticket.id}0'),
+                            subtitle: Text(
+                                'Fecha: ${ticket.date} - Total: \$${ticket.total} '),
+                            trailing: OutlinedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return TicketInfoView(
+                                        carId: ticket.carId!,
+                                        clientId: ticket.clientId!,
+                                        requestId: ticket.requestId!,
+                                        employeeId: ticket.employeeId!,
+                                        total: ticket.total,
+                                        date: ticket.date,
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              child: const Icon(Icons.arrow_forward_ios),
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    );
+            },
+          ),
+        ),
       ),
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Client Home'),
+        title: const Text('Menu Cliente'),
+        backgroundColor: Colors.orange.shade400,
       ),
       drawer: Drawer(
         child: ListView(

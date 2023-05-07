@@ -34,6 +34,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro de Empleado'),
+        backgroundColor: Colors.blue.shade600,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -50,8 +51,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: const Text('Rellena los siguientes campos',
-                    style: TextStyle(fontSize: 15)),
+                    style: TextStyle(fontSize: 17)),
               ),
+              const SizedBox(height: 20.0),
               InputTextField(
                 controller: rfcController,
                 labelText: 'RFC',
@@ -110,7 +112,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
               ),
               InputTextField(
                 controller: cityController,
-                labelText: 'Estado',
+                labelText: 'Estado de Nacimiento',
                 hintText: 'Ingrese su estado',
                 icon: const Icon(Icons.location_city),
                 maxLength: 30,

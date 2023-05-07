@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/components/status_selection_dialog.dart';
+import 'package:proyectobd/employee/service_details.dart';
 
 class CardActualCar extends StatelessWidget {
+  final int? requestId;
+  final int? employeeId;
+  final int? clientId;
+  final int? carId;
   final String clientName;
+  final String brand;
   final String model;
   final String licencePlates;
-  final String year;
   final String date;
   final String status;
   final String paid;
-  final VoidCallback onPressedChangeStatus;
-  final VoidCallback onPressedSeeDetails;
+
+  final VoidCallback onUpdateRequestList;
   const CardActualCar(
-      {required this.clientName,
+      {required this.requestId,
+      this.employeeId,
+      this.clientId,
+      this.carId,
+      required this.clientName,
+      required this.brand,
       required this.licencePlates,
       required this.model,
-      required this.year,
       required this.date,
       required this.status,
       required this.paid,
-      required this.onPressedChangeStatus,
-      required this.onPressedSeeDetails,
+      required this.onUpdateRequestList,
       super.key});
 
   @override
@@ -35,7 +44,7 @@ class CardActualCar extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     backgroundImage: NetworkImage(
-                      'https://via.placeholder.com/150',
+                      'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg',
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -59,7 +68,7 @@ class CardActualCar extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Placas',
+                        'Auto',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -67,7 +76,7 @@ class CardActualCar extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        licencePlates,
+                        '$brand $model',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -79,7 +88,7 @@ class CardActualCar extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Modelo',
+                        'Status',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -87,7 +96,7 @@ class CardActualCar extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        model,
+                        status,
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -123,7 +132,19 @@ class CardActualCar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: onPressedSeeDetails,
+                  onPressed: () {
+                    debugPrint('paid: $paid');
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return ServiceDetails(
+                            clientId: clientId,
+                            requestId: requestId,
+                          );
+                        },
+                      ),
+                    );
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),
                   ),
@@ -131,7 +152,17 @@ class CardActualCar extends StatelessWidget {
                       style: TextStyle(color: Colors.white)),
                 ),
                 ElevatedButton(
-                  onPressed: onPressedChangeStatus,
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => StatusSelectionDialog(
+                            requestId: requestId,
+                            employeeId: employeeId,
+                            clientId: clientId,
+                            carId: carId,
+                            onUpdateRequestList: onUpdateRequestList));
+                    debugPrint('requestId: $requestId');
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.blue),
                   ),

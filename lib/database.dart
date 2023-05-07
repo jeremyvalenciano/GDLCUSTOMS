@@ -1,11 +1,13 @@
 // This file contains the database helper class
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/classes/admin_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
+import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -121,16 +123,22 @@ class DatabaseHelper {
           )
           ''');
     await db.execute('''
-          CREATE TABLE Products (
+          CREATE TABLE Tickets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             carId INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            brand TEXT NOT NULL,
-            description TEXT NOT NULL,
-            quantity INT DEFAULT 0,
-            price FLOAT DEFAULT 0
+            clientId INTEGER NOT NULL,
+            requestId INTEGER NOT NULL,
+            employeeId INTEGER NOT NULL,
+            total FLOAT DEFAULT 0,
+            date TEXT NOT NULL,
+            IVA INTEGER DEFAULT 0,
+            FOREIGN KEY (carId) REFERENCES Cars(id),
+            FOREIGN KEY (clientId) REFERENCES Clients(id),
+            FOREIGN KEY (requestId) REFERENCES Requests(id),
+            FOREIGN KEY (employeeId) REFERENCES Employees(id)
           )
           ''');
+
     /*await db.execute('''
       CREATE TRIGGER insert_service AFTER INSERT ON Requests
         BEGIN
@@ -138,6 +146,8 @@ class DatabaseHelper {
         END;
     ''');*/
   }
+
+  //Trigger functions
 
   //General functions
   Future<bool> loginAdmin(String email, String password) async {
@@ -312,12 +322,12 @@ class DatabaseHelper {
     return result.isNotEmpty;
   }
 
-  Future<Employee> getEmployeeById(String rfc) async {
+  Future<Employee> getEmployeeById(int id) async {
     Database db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(
       'Employees',
-      where: 'rfc= ?',
-      whereArgs: [rfc],
+      where: 'id= ?',
+      whereArgs: [id],
     );
     if (maps.isNotEmpty) {
       return Employee(
@@ -335,7 +345,7 @@ class DatabaseHelper {
         fiscalRegime: maps.first['fiscalRegime'],
       );
     } else {
-      throw Exception('No se encontró el empleado con el RFC: $rfc');
+      throw Exception('No se encontró el empleado con el : $id');
     }
   }
 
@@ -456,6 +466,32 @@ class DatabaseHelper {
     }
   }
 
+  Future<Car> getCarById(int id) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Cars',
+      where: 'id= ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Car(
+        id: maps.first['id'],
+        clientId: maps.first['clientId'],
+        licencePlate: maps.first['licencePlate'],
+        brand: maps.first['brand'],
+        type: maps.first['type'],
+        model: maps.first['model'],
+        carYear: maps.first['year'],
+        color: maps.first['color'],
+        kilometers: maps.first['kilometers'],
+        lastService: maps.first['lastService'],
+        doors: maps.first['doors'],
+      );
+    } else {
+      throw Exception('No se encontró el carro con el id: $id');
+    }
+  }
+
   //Request Functions
   Future<int> insertRequest(ServiceRequest request) async {
     Database db = await instance.database;
@@ -486,6 +522,12 @@ class DatabaseHelper {
         'UPDATE Requests SET status = ? WHERE id = ?', ['Aceptado', id]);
   }
 
+  Future<void> updateRequestStatus(int id, String status) async {
+    Database db = await instance.database;
+    await db
+        .rawUpdate('UPDATE Requests SET status = ? WHERE id = ?', [status, id]);
+  }
+
   Future<ServiceRequest> getRequestIdBylicence(String licencePlate) async {
     Database db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -514,11 +556,38 @@ class DatabaseHelper {
 
   Future<List<ServiceRequest>> getRequestsByEmployeeId(int employeeId) async {
     Database db = await instance.database;
-    var result = await db
-        .query('Requests', where: 'employeeId = ?', whereArgs: [employeeId]);
+    var result = await db.query('Requests',
+        where:
+            'employeeId = ? AND (status = "Aceptado" OR status = "En proceso")',
+        whereArgs: [employeeId]);
     List<ServiceRequest> requests = result.isNotEmpty
         ? result.map((json) => ServiceRequest.fromMap(json)).toList()
         : [];
     return requests;
+  }
+
+  //Ticket Functions
+  Future<List<Ticket>> getTickets() async {
+    Database db = await instance.database;
+    var result = await db.query('Tickets');
+    List<Ticket> tickets = result.isNotEmpty
+        ? result.map((json) => Ticket.fromMap(json)).toList()
+        : [];
+    return tickets;
+  }
+
+  Future<List<Ticket>> getTicketsByClientId(int id) async {
+    Database db = await instance.database;
+    var result =
+        await db.query('Tickets', where: 'clientId = ?', whereArgs: [id]);
+    List<Ticket> tickets = result.isNotEmpty
+        ? result.map((json) => Ticket.fromMap(json)).toList()
+        : [];
+    return tickets;
+  }
+
+  Future<int> insertTicket(Ticket ticket) async {
+    Database db = await instance.database;
+    return await db.insert('Tickets', ticket.toMap());
   }
 }

@@ -23,10 +23,27 @@ final dbHelper = DatabaseHelper.instance;
 
 class _HomePageEmployeeState extends State<HomePageEmployee> {
   int _selectedIndex = 0;
+  List<ServiceRequest>? _requests;
+  List<ServiceRequest>? _workingRequests;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void updateRequests() async {
+    List<ServiceRequest> requests = await dbHelper.getRequests();
+    setState(() {
+      _requests = requests;
+    });
+  }
+
+  void updateWorkingRequests() async {
+    List<ServiceRequest> requests =
+        await dbHelper.getRequestsByEmployeeId(widget.employee.id!);
+    setState(() {
+      _workingRequests = requests;
     });
   }
 
@@ -44,7 +61,7 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
             }
             return snapshot.data!.isEmpty
                 ? const Text(
-                    'Sin Solicitudes de servicio actualmente',
+                    'Sin Solicitudes de Servicio',
                     style: TextStyle(fontSize: 20),
                   )
                 : ListView(
@@ -59,6 +76,7 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
                           date: request.date,
                           requestId: request.id,
                           employeeId: widget.employee.id,
+                          onUpdateRequestList: updateRequests,
                           onPressedDetails: () async {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -90,7 +108,7 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
             return snapshot.data!.isEmpty
                 ? const Center(
                     child: Text(
-                      'No hay Servicios en los que estes trabajando actualmente',
+                      'No se esta atendiendo ningun servicio',
                       style: TextStyle(fontSize: 20),
                     ),
                   )
@@ -98,31 +116,19 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
                     children: snapshot.data!.map(
                       (request) {
                         return CardActualCar(
-                            clientName: request.clientName,
-                            licencePlates: request.licencePlate,
-                            model: request.status,
-                            year: '2020',
-                            date: request.date,
-                            status: 'Aceptado',
-                            paid: 'No',
-                            onPressedChangeStatus: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return const EditStatus();
-                                  },
-                                ),
-                              );
-                            },
-                            onPressedSeeDetails: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return const ServiceDetails();
-                                  },
-                                ),
-                              );
-                            });
+                          requestId: request.id,
+                          employeeId: widget.employee.id,
+                          carId: request.carId,
+                          clientId: request.clientId,
+                          clientName: request.clientName,
+                          licencePlates: request.licencePlate,
+                          model: request.modelCar,
+                          brand: request.brandCar,
+                          date: request.date,
+                          status: request.status,
+                          paid: request.paid,
+                          onUpdateRequestList: updateWorkingRequests,
+                        );
                       },
                     ).toList(),
                   );
@@ -132,12 +138,14 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pagina Principal de empleado'),
+        title: const Text('Menu de Empleado'),
+        backgroundColor: Colors.blue[500],
       ),
       drawer: Drawer(
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
+              arrowColor: Colors.red,
               accountName: Text(widget.employee.name),
               accountEmail: Text(widget.employee.email),
               currentAccountPicture: const CircleAvatar(
@@ -210,8 +218,8 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.blue[700],
+        unselectedItemColor: Colors.blue[300],
         onTap: _onItemTapped,
       ),
     );

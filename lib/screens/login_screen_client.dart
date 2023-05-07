@@ -41,6 +41,7 @@ class _LoginScreenClientState extends State<LoginScreenClient> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Cliente'),
+        backgroundColor: Colors.orange.shade600,
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -48,7 +49,7 @@ class _LoginScreenClientState extends State<LoginScreenClient> {
           children: [
             Container(
               margin: const EdgeInsets.only(top: 10, bottom: 10),
-              child: const Text('Bienvenido de nuevo a \n         GDL Customs',
+              child: const Text('Bienvenido de nuevo a \n        GDL CUSTOMS',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -87,7 +88,7 @@ class _LoginScreenClientState extends State<LoginScreenClient> {
               child: RoundedButton(
                   text: "Iniciar sesion",
                   textColor: Colors.white,
-                  btnColor: Colors.blue,
+                  btnColor: Colors.orange.shade600,
                   fontSize: 20,
                   onPressed: () async {
                     final bool isLoggedIn = await submitLoginFormClient();

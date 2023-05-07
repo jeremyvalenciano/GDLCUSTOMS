@@ -33,6 +33,7 @@ class _ClientScreenState extends State<ClientScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro de Cliente'),
+        backgroundColor: Colors.orange.shade600,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -156,7 +157,7 @@ class _ClientScreenState extends State<ClientScreen> {
                 padding: const EdgeInsets.only(top: 50, bottom: 50),
                 child: RoundedButton(
                   text: 'Siguiente',
-                  btnColor: Colors.blue,
+                  btnColor: Colors.orange.shade600,
                   fontSize: 15,
                   textColor: Colors.white,
                   onPressed: () {
