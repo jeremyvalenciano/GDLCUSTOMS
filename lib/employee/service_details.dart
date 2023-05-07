@@ -72,7 +72,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
       appBar: AppBar(
         elevation: 0,
         title: const Text('Detalles del servicio'),
-        backgroundColor: Colors.yellow[600],
+        backgroundColor: Colors.blue.shade400,
         shadowColor: Colors.blue,
       ),
       body: Column(
@@ -80,7 +80,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
           Container(
             padding: const EdgeInsets.only(bottom: 30, left: 15),
             decoration: BoxDecoration(
-              color: Colors.yellow[600],
+              color: Colors.blue.shade400,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(
                     25.0), // Radio de la esquina inferior izquierda
@@ -101,7 +101,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
-                Text(widget.requestId.toString()),
+                Text('${widget.requestId}0'),
               ],
             ),
           ),
@@ -218,7 +218,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                   child: RoundedButton(
                     text: 'Llamar',
                     textColor: Colors.black,
-                    btnColor: Colors.yellow,
+                    btnColor: Colors.blue.shade400,
                     fontSize: 15,
                     onPressed: () {
                       dialNumber(clientPhone);

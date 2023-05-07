@@ -20,6 +20,7 @@ class _CardInfoCarState extends State<CardInfoCar> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Informacion de su Automovil'),
+        backgroundColor: Colors.orange.shade500,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,16 +145,40 @@ class _CardInfoCarState extends State<CardInfoCar> {
                     btnColor: Colors.red,
                     fontSize: 18,
                     onPressed: () {
-                      dbHelper.deleteCar(widget.car.id);
-                      if (mounted) {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return HomePageClient(client: widget.client);
-                            },
-                          ),
-                        );
-                      }
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Eliminar automóvil'),
+                            content: const Text(
+                                '¿Está seguro de que desea eliminar este automóvil?'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  dbHelper.deleteCar(widget.car.id);
+                                  if (mounted) {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          return HomePageClient(
+                                              client: widget.client);
+                                        },
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const Text('Aceptar'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }),
               ],
             ),

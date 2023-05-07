@@ -106,11 +106,37 @@ class CardRequest extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    dbHelper.asignEmployeeIdToRequest(requestId!, employee.id!);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Aceptar petición"),
+                          content: const Text(
+                              "¿Está seguro de que deseas aceptar la petición?"),
+                          actions: [
+                            TextButton(
+                              child: const Text("Cancelar"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text("Si, aceptar"),
+                              onPressed: () {
+                                dbHelper.asignEmployeeIdToRequest(
+                                    requestId!, employee.id!);
+                                onUpdateRequestList();
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
                     debugPrint('Se asignó el empleado a la petición');
                     debugPrint('employeeId: ${employee.id!}');
                     debugPrint('requestId: ${requestId!}');
-                    onUpdateRequestList();
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),

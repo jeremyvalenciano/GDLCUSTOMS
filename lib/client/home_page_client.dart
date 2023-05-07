@@ -6,7 +6,7 @@ import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/screens/add_one_car.dart' hide dbHelper;
-import 'package:proyectobd/client/client_profile_view.dart' hide dbHelper;
+import 'package:proyectobd/client/client_profile_view.dart';
 import 'package:proyectobd/client/services_list_view.dart';
 
 class HomePageClient extends StatefulWidget {
@@ -21,9 +21,6 @@ class HomePageClient extends StatefulWidget {
 class _HomePageClientState extends State<HomePageClient> {
   List<Car> clientCars = [];
   int _selectedIndex = 0;
-
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   void _onItemTapped(int index) {
     setState(() {
@@ -91,6 +88,7 @@ class _HomePageClientState extends State<HomePageClient> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.orange.shade400,
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -148,12 +146,8 @@ class _HomePageClientState extends State<HomePageClient> {
                                   MaterialPageRoute(
                                     builder: (BuildContext context) {
                                       return TicketInfoView(
-                                        carId: ticket.carId!,
                                         clientId: ticket.clientId!,
                                         requestId: ticket.requestId!,
-                                        employeeId: ticket.employeeId!,
-                                        total: ticket.total,
-                                        date: ticket.date,
                                       );
                                     },
                                   ),
@@ -179,13 +173,15 @@ class _HomePageClientState extends State<HomePageClient> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(widget.client.name),
-              accountEmail: Text(widget.client.email),
-              currentAccountPicture: const CircleAvatar(
-                backgroundImage: NetworkImage(
-                    'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
-              ),
-            ),
+                accountName: Text(widget.client.name),
+                accountEmail: Text(widget.client.email),
+                currentAccountPicture: const CircleAvatar(
+                  backgroundImage: NetworkImage(
+                      'https://static.vecteezy.com/system/resources/previews/005/544/718/original/profile-icon-design-free-vector.jpg'),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade400,
+                )),
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Perfil'),
@@ -256,7 +252,7 @@ class _HomePageClientState extends State<HomePageClient> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.orange[200],
         onTap: _onItemTapped,
       ),
     );

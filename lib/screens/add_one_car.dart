@@ -34,6 +34,7 @@ class _AddOneCarState extends State<AddOneCar> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro de un Auto'),
+        backgroundColor: Colors.orange.shade500,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -59,7 +60,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 controller: licencePlateController,
                 labelText: 'Placas de su auto',
                 hintText: 'Ingrese sus placas',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.eight_k_plus_sharp),
                 maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
@@ -67,7 +68,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 controller: brandController,
                 labelText: 'Marca de su auto',
                 hintText: 'Ingrese marca de su auto',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.format_color_text),
                 maxLength: 15,
                 keyboardType: TextInputType.text,
               ),
@@ -83,7 +84,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 controller: typeController,
                 labelText: 'Tipo de auto',
                 hintText: 'Ingrese el tipo de auto',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.toys_sharp),
                 maxLength: 15,
                 keyboardType: TextInputType.text,
               ),
@@ -91,7 +92,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 controller: yearController,
                 labelText: 'Año de su auto',
                 hintText: 'Ingrese año de su auto',
-                icon: const Icon(Icons.drive_eta),
+                icon: const Icon(Icons.calendar_today),
                 maxLength: 4,
                 keyboardType: TextInputType.phone,
               ),
@@ -115,7 +116,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 controller: kilometersController,
                 labelText: 'Kilometraje',
                 hintText: 'Ingrese su kilometraje',
-                icon: const Icon(Icons.numbers),
+                icon: const Icon(Icons.do_not_disturb_on_outlined),
                 maxLength: 6,
                 keyboardType: TextInputType.phone,
               ),
@@ -131,7 +132,7 @@ class _AddOneCarState extends State<AddOneCar> {
                 padding: const EdgeInsets.only(top: 50, bottom: 50),
                 child: RoundedButton(
                   text: 'Finalizar registro',
-                  btnColor: Colors.blue,
+                  btnColor: Colors.orange.shade500,
                   fontSize: 15,
                   textColor: Colors.white,
                   onPressed: () async {

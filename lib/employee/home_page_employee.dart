@@ -145,7 +145,9 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-              arrowColor: Colors.red,
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+              ),
               accountName: Text(widget.employee.name),
               accountEmail: Text(widget.employee.email),
               currentAccountPicture: const CircleAvatar(

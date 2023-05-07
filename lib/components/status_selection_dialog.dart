@@ -87,6 +87,10 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
           child: const Text("Cancelar"),
         ),
         ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Colors.blue.shade400),
+          ),
           onPressed: () {
             _showConfirmationDialog(context);
           },
@@ -113,6 +117,10 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
               child: const Text("Cancelar"),
             ),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Colors.blue.shade400),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(true);
                 Navigator.of(context).pop(true);

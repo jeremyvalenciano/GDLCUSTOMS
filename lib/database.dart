@@ -43,7 +43,7 @@ class DatabaseHelper {
           CREATE TABLE Clients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            email TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             cellphone TEXT NOT NULL UNIQUE,
             birthday TEXT NOT NULL,

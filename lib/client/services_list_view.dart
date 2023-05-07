@@ -104,6 +104,8 @@ class _ServicesListViewState extends State<ServicesListView> {
       body: Column(
         children: [
           const SizedBox(height: 10),
+          const Text('Seleccione un auto',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           DropdownButtonFormField<Car>(
             value: widget.autoSelected,
             items: widget.autos.map((auto) {
@@ -228,6 +230,7 @@ class _ServicesListViewState extends State<ServicesListView> {
         },
         label: const Text('Solicitar servicios'),
         icon: const Icon(Icons.send),
+        backgroundColor: Colors.orange[500],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
