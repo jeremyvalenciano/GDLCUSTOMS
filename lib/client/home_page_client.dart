@@ -139,7 +139,7 @@ class _HomePageClientState extends State<HomePageClient> {
                             ),
                             title: Text('Folio: ${ticket.id}0'),
                             subtitle: Text(
-                                'Fecha: ${ticket.date} - Total: \$${ticket.total} '),
+                                'Fecha: ${ticket.date} - Total: \$${ticket.total} - Carro: ${ticket.carId} '),
                             trailing: OutlinedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
@@ -148,6 +148,7 @@ class _HomePageClientState extends State<HomePageClient> {
                                       return TicketInfoView(
                                         clientId: ticket.clientId!,
                                         requestId: ticket.requestId!,
+                                        carId: ticket.carId!,
                                       );
                                     },
                                   ),

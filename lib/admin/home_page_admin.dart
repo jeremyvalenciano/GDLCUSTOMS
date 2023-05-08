@@ -3,6 +3,8 @@ import 'package:proyectobd/admin/admin_profile.dart';
 import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/admin_class.dart';
+import 'package:proyectobd/classes/ticket_class.dart';
+import 'package:proyectobd/components/ticket_info_view.dart';
 import 'package:proyectobd/database.dart';
 import 'package:proyectobd/admin/employee_profile.dart';
 import 'package:proyectobd/admin/client_profile.dart';
@@ -11,8 +13,7 @@ import 'package:proyectobd/home_page.dart';
 final dbHelper = DatabaseHelper.instance;
 
 class HomePageAdmin extends StatefulWidget {
-  
-  const HomePageAdmin({ Key? key}) : super(key: key);
+  const HomePageAdmin({Key? key}) : super(key: key);
 
   @override
   State<HomePageAdmin> createState() => _HomePageAdminState();
@@ -108,6 +109,59 @@ class _HomePageAdminState extends State<HomePageAdmin> {
         },
       ),
     ),
+    Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(10),
+        child: FutureBuilder<List<Ticket>>(
+          future: dbHelper.getTickets(),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Ticket>> snapshot) {
+            if (!snapshot.hasData) {
+              return const Text('Cargando...');
+            }
+            return snapshot.data!.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No hay Tickets',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  )
+                : ListView(
+                    children: snapshot.data!.map(
+                      (ticket) {
+                        return ListTile(
+                          leading: const CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                'https://static.vecteezy.com/system/resources/previews/002/205/928/non_2x/payment-invoice-icon-free-vector.jpg'),
+                          ),
+                          title: Text('Folio: ${ticket.id}0'),
+                          subtitle: Text(
+                              'Fecha: ${ticket.date} - Total: \$${ticket.total} '),
+                          trailing: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return TicketInfoView(
+                                      clientId: ticket.clientId!,
+                                      requestId: ticket.requestId!,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: const Icon(Icons.arrow_forward_ios),
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  );
+          },
+        ),
+      ),
+    ),
   ];
 
   void _onItemTapped(int index) {
@@ -146,10 +200,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                   ),
                 );
               },
-            ),
-            const ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuracion'),
             ),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -200,6 +250,10 @@ class _HomePageAdminState extends State<HomePageAdmin> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Clientes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.payment),
+            label: 'Tickets',
           ),
         ],
         currentIndex: _selectedIndex,

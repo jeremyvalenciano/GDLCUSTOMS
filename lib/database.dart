@@ -60,7 +60,7 @@ class DatabaseHelper {
             name TEXT NOT NULL,
             password TEXT NOT NULL,
             cellphone TEXT NOT NULL,
-            email TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
             address TEXT NOT NULL,
             city TEXT NOT NULL,
             genre TEXT NOT NULL,
@@ -139,12 +139,36 @@ class DatabaseHelper {
           )
           ''');
 
-    /*await db.execute('''
-      CREATE TRIGGER insert_service AFTER INSERT ON Requests
-        BEGIN
-          INSERT INTO Service (service_name, service_date) VALUES ('service name', 'service date');
+    await db.execute('''
+      CREATE TRIGGER IF NOT EXISTS check_unique_email_client
+      BEFORE INSERT ON Clients
+      FOR EACH ROW
+      BEGIN
+        SELECT CASE WHEN (SELECT 1 FROM Clients WHERE email = NEW.email) THEN
+          RAISE(ABORT, 'Error: Client email already exists')
         END;
-    ''');*/
+      END;
+    ''');
+    await db.execute('''
+      CREATE TRIGGER IF NOT EXISTS check_unique_email_employee
+      BEFORE INSERT ON Employees
+      FOR EACH ROW
+      BEGIN
+        SELECT CASE WHEN (SELECT 1 FROM Employees WHERE email = NEW.email) THEN
+          RAISE(ABORT, 'Error: Employee email already exists')
+        END;
+      END;
+    ''');
+    await db.execute('''
+      CREATE TRIGGER IF NOT EXISTS check_unique_licence_plate
+      BEFORE INSERT ON Cars
+      FOR EACH ROW
+      BEGIN
+        SELECT CASE WHEN (SELECT 1 FROM Cars WHERE licencePlate = NEW.licencePlate) THEN
+          RAISE(ABORT, 'Error: LicencePlate already exists')
+        END;
+      END;
+    ''');
   }
 
   //Trigger functions
@@ -215,8 +239,12 @@ class DatabaseHelper {
   }
 
   Future<int> insertClient(Client client) async {
-    Database db = await instance.database;
-    return await db.insert('Clients', client.toMap());
+    final db = await instance.database;
+    return await db.insert(
+      'Clients',
+      client.toMap(),
+      //conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<int> deleteClient(String email) async {

@@ -4,6 +4,33 @@ import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/client/home_page_client.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+/*Future<String?> getFirstImageUrl(String searchText) async {
+  final String apiKey = 'AIzaSyBal3rXuXMXcNeqkQ1F_OU0f825ptk1DcY';
+  final String searchEngineId = 'c712f948d33c04341';
+  final String url = 'https://www.googleapis.com/customsearch/v1?'
+      'key=$apiKey'
+      '&cx=$searchEngineId'
+      '&searchType=image'
+      '&q=$searchText';
+
+  final response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = jsonDecode(response.body);
+    if (data != null && data['items'] != null) {
+      final items = data['items'] as List;
+      if (items.isNotEmpty) {
+        final imageUrl = items.first['link'] as String;
+        debugPrint('imageUrl: $imageUrl');
+        return imageUrl;
+      }
+    }
+  }
+
+  return '';
+}*/
 
 class CardInfoCar extends StatefulWidget {
   final Car car;
@@ -15,6 +42,11 @@ class CardInfoCar extends StatefulWidget {
 }
 
 class _CardInfoCarState extends State<CardInfoCar> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,8 +112,7 @@ class _CardInfoCarState extends State<CardInfoCar> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.network(
-                'https://img.remediosdigitales.com/58a8da/2020-mazda-mx-5-updates-10-1/450_1000.jpg',
-                width: 325.0,
+                'https://static.vecteezy.com/system/resources/previews/008/561/510/non_2x/simple-icon-modern-sign-car-silhouette-on-background-front-view-car-icon-vehicle-inspiration-editable-eps10-free-vector.jpg',
                 height: 325.0,
               ),
               const Text(

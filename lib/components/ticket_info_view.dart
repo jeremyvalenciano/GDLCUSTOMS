@@ -4,6 +4,7 @@ import 'package:proyectobd/components/service_element.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
+import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/database.dart';
 
 Future<void> dialNumber(String phoneNumber) async {
@@ -17,8 +18,18 @@ Future<void> dialNumber(String phoneNumber) async {
 class TicketInfoView extends StatefulWidget {
   final int? clientId;
   final int? requestId;
-
-  const TicketInfoView({this.clientId, this.requestId, super.key});
+  final int? carId;
+  final String? brandCar;
+  final String? modelCar;
+  final String? licencePlate;
+  const TicketInfoView(
+      {this.clientId,
+      this.requestId,
+      this.carId,
+      this.brandCar,
+      this.modelCar,
+      this.licencePlate,
+      super.key});
 
   @override
   State<TicketInfoView> createState() => _TicketInfoViewState();
@@ -45,6 +56,18 @@ class _TicketInfoViewState extends State<TicketInfoView> {
       });
     });
   }
+  //por que no funciona el getCarById()?
+  /*getCarById() async {
+    Future<Car> futureCar = dbHelper.getCarById(widget.carId!);
+
+    futureCar.then((car) {
+      setState(() {
+        carInfo = car.brand;
+
+        //debugPrint('${car.brand} ${car.model} - ${car.licencePlate}');
+      });
+    });
+  }*/
 
   getServiceByRequestId() async {
     Future<List<Service>> futureServices =
@@ -120,6 +143,15 @@ class _TicketInfoViewState extends State<TicketInfoView> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     Text(clientName),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text('Auto: ',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                        '${widget.brandCar} ${widget.modelCar} - ${widget.licencePlate}'),
                   ],
                 ),
                 Row(

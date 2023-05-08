@@ -119,7 +119,7 @@ class _HomePageEmployeeState extends State<HomePageEmployee> {
                           requestId: request.id,
                           employeeId: widget.employee.id,
                           carId: request.carId,
-                          clientId: request.clientId,
+                          clientId: request.clientId!,
                           clientName: request.clientName,
                           licencePlates: request.licencePlate,
                           model: request.modelCar,

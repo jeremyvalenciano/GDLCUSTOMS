@@ -3,6 +3,7 @@ import 'package:proyectobd/client/home_page_client.dart';
 import '../database.dart';
 import '../classes/car_class.dart';
 import '../classes/client_class.dart';
+import 'package:sqflite/sqflite.dart';
 
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
@@ -138,27 +139,78 @@ class _AddOneCarState extends State<AddOneCar> {
                   onPressed: () async {
                     final clientWithId =
                         await dbHelper.getClientByEmail(widget.client.email);
-                    await dbHelper.insertCar(Car(
-                      clientId: clientWithId.id,
-                      licencePlate: licencePlateController.text,
-                      model: modelController.text,
-                      brand: brandController.text,
-                      carYear: yearController.text,
-                      type: typeController.text,
-                      doors: int.parse(doorsController.text),
-                      color: colorController.text,
-                      kilometers: int.parse(kilometersController.text),
-                      lastService: lastServiceController.text,
-                    ));
-                    debugPrint('Car registered');
-                    if (mounted) {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return HomePageClient(client: widget.client);
-                          },
-                        ),
-                      );
+                    if (licencePlateController.text.isEmpty ||
+                        modelController.text.isEmpty ||
+                        brandController.text.isEmpty ||
+                        typeController.text.isEmpty ||
+                        yearController.text.isEmpty ||
+                        doorsController.text.isEmpty ||
+                        colorController.text.isEmpty ||
+                        kilometersController.text.isEmpty ||
+                        lastServiceController.text.isEmpty) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Por favor llene todos los campos'),
+                            backgroundColor: Colors.red,
+                            duration: Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    } else {
+                      try {
+                        debugPrint('Registering car');
+                        int carId = await dbHelper.insertCar(Car(
+                          clientId: clientWithId.id,
+                          licencePlate: licencePlateController.text,
+                          model: modelController.text,
+                          brand: brandController.text,
+                          carYear: yearController.text,
+                          type: typeController.text,
+                          doors: int.parse(doorsController.text),
+                          color: colorController.text,
+                          kilometers: int.parse(kilometersController.text),
+                          lastService: lastServiceController.text,
+                        ));
+
+                        if (carId > 0 && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Registro Exitoso de Automovil!'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return HomePageClient(client: widget.client);
+                              },
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (e is DatabaseException && mounted) {
+                          String errorMessage = e.toString();
+                          RegExp regExp =
+                              RegExp("Error: LicencePlate already exists (.+)");
+                          Match? match = regExp.firstMatch(errorMessage);
+                          if (match != null) {
+                            errorMessage = match.group(1) ?? errorMessage;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Auto ya registrado con esas Placas! intente de nuevo'),
+                              backgroundColor: Colors.orange,
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
                     }
                   },
                 ),

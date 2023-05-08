@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:proyectobd/home_page.dart';
 import 'login_screen_client.dart';
 import '../classes/employee_class.dart';
+import 'package:sqflite/sqflite.dart';
 
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
@@ -176,29 +177,89 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     btnColor: Colors.blue,
                     fontSize: 15,
                     textColor: Colors.white,
-                    onPressed: () {
-                      dbHelper.insertEmployee(Employee(
-                        rfc: rfcController.text,
-                        name: nameController.text,
-                        email: emailController.text,
-                        password: passwordController.text,
-                        cellphone: cellphoneController.text,
-                        birthday: dateController.text,
-                        address: addressController.text,
-                        genre: _genderController.text,
-                        city: cityController.text,
-                        age: int.parse(ageController.text),
-                        role: roleController.text,
-                        fiscalRegime: fiscalRegimeController.text,
-                      ));
-
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return const HomePage();
-                          },
-                        ),
-                      );
+                    onPressed: () async {
+                      if (rfcController.text.isEmpty ||
+                          nameController.text.isEmpty ||
+                          emailController.text.isEmpty ||
+                          passwordController.text.isEmpty ||
+                          cellphoneController.text.isEmpty ||
+                          fiscalRegimeController.text.isEmpty ||
+                          roleController.text.isEmpty ||
+                          cityController.text.isEmpty ||
+                          addressController.text.isEmpty ||
+                          ageController.text.isEmpty ||
+                          dateController.text.isEmpty ||
+                          _genderController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Por favor, llene todos los campos'),
+                            backgroundColor: Colors.red,
+                            duration: Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      } else {
+                        try {
+                          int result = await dbHelper.insertEmployee(Employee(
+                            rfc: rfcController.text,
+                            name: nameController.text,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            cellphone: cellphoneController.text,
+                            birthday: dateController.text,
+                            address: addressController.text,
+                            genre: _genderController.text,
+                            city: cityController.text,
+                            age: int.parse(ageController.text),
+                            role: roleController.text,
+                            fiscalRegime: fiscalRegimeController.text,
+                          ));
+                          if (result > 0 && mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Registro Exitoso!'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return const HomePage();
+                                },
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Registro fallido!'),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (e is DatabaseException) {
+                            String errorMessage = e.toString();
+                            RegExp regExp = RegExp(
+                                "Error: Employee email already exists (.+)");
+                            Match? match = regExp.firstMatch(errorMessage);
+                            if (match != null) {
+                              errorMessage = match.group(1) ?? errorMessage;
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Correo ya registrado!'),
+                                backgroundColor: Colors.orange,
+                                duration: Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        }
+                      }
                     },
                   ),
                 ),

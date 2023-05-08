@@ -17,8 +17,21 @@ Future<void> dialNumber(String phoneNumber) async {
 class ServiceDetails extends StatefulWidget {
   final int? clientId;
   final int? requestId;
+  final int? employeeId;
+  final int? carId;
+  final String? brandCar;
+  final String? modelCar;
+  final String? licencePlate;
 
-  const ServiceDetails({this.clientId, this.requestId, super.key});
+  const ServiceDetails(
+      {this.clientId,
+      this.requestId,
+      this.employeeId,
+      this.carId,
+      this.brandCar,
+      this.modelCar,
+      this.licencePlate,
+      super.key});
 
   @override
   State<ServiceDetails> createState() => _ServiceDetailsState();
@@ -120,6 +133,14 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     Text(clientName),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text('Auto: ',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('$widget.brandCar $widget.modelCar'),
                   ],
                 ),
                 Row(

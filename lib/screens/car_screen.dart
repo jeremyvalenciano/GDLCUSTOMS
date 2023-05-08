@@ -3,6 +3,7 @@ import '../database.dart';
 import '../classes/car_class.dart';
 import '../classes/client_class.dart';
 import 'package:proyectobd/home_page.dart';
+import 'package:sqflite/sqflite.dart';
 
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
@@ -12,7 +13,8 @@ final dbHelper = DatabaseHelper.instance;
 
 class CarScreen extends StatefulWidget {
   final Client client;
-  const CarScreen({required this.client, super.key});
+  final int? clientId;
+  const CarScreen({required this.client, this.clientId, super.key});
 
   @override
   State<CarScreen> createState() => _CarScreenState();
@@ -132,45 +134,77 @@ class _CarScreenState extends State<CarScreen> {
                 padding: const EdgeInsets.only(top: 50, bottom: 50),
                 child: RoundedButton(
                   text: 'Finalizar registro',
-                  btnColor: Colors.blue,
+                  btnColor: Colors.orange.shade600,
                   fontSize: 15,
                   textColor: Colors.white,
                   onPressed: () async {
-                    await dbHelper.insertClient(Client(
-                      name: widget.client.name,
-                      email: widget.client.email,
-                      password: widget.client.password,
-                      cellphone: widget.client.cellphone,
-                      birthday: widget.client.birthday,
-                      address: widget.client.address,
-                      genre: widget.client.genre,
-                      city: widget.client.city,
-                      age: widget.client.age,
-                    ));
-                    final clientWithId =
-                        await dbHelper.getClientByEmail(widget.client.email);
-
-                    await dbHelper.insertCar(Car(
-                      clientId: clientWithId.id,
-                      licencePlate: licencePlateController.text,
-                      model: modelController.text,
-                      brand: brandController.text,
-                      carYear: yearController.text,
-                      type: typeController.text,
-                      doors: int.parse(doorsController.text),
-                      color: colorController.text,
-                      kilometers: int.parse(kilometersController.text),
-                      lastService: lastServiceController.text,
-                    ));
-                    debugPrint('Car registered');
-                    if (mounted) {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return const HomePage();
-                          },
+                    if (licencePlateController.text.isEmpty ||
+                        modelController.text.isEmpty ||
+                        brandController.text.isEmpty ||
+                        typeController.text.isEmpty ||
+                        yearController.text.isEmpty ||
+                        doorsController.text.isEmpty ||
+                        colorController.text.isEmpty ||
+                        kilometersController.text.isEmpty ||
+                        lastServiceController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Por favor llene todos los campos'),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
                         ),
                       );
+                    } else {
+                      try {
+                        debugPrint('Registering car');
+                        int carId = await dbHelper.insertCar(Car(
+                          clientId: widget.clientId!,
+                          licencePlate: licencePlateController.text,
+                          model: modelController.text,
+                          brand: brandController.text,
+                          carYear: yearController.text,
+                          type: typeController.text,
+                          doors: int.parse(doorsController.text),
+                          color: colorController.text,
+                          kilometers: int.parse(kilometersController.text),
+                          lastService: lastServiceController.text,
+                        ));
+
+                        if (carId > 0 && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Registro Exitoso de Automovil!'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (Route<dynamic> route) => false);
+                        }
+                      } catch (e) {
+                        if (e is DatabaseException) {
+                          String errorMessage = e.toString();
+                          RegExp regExp =
+                              RegExp("Error: LicencePlate already exists (.+)");
+                          Match? match = regExp.firstMatch(errorMessage);
+                          if (match != null) {
+                            errorMessage = match.group(1) ?? errorMessage;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Auto ya registrado con esas Placas! intente de nuevo'),
+                              backgroundColor: Colors.orange,
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
                     }
                   },
                 ),

@@ -3,6 +3,7 @@ import '../database.dart';
 import '../classes/client_class.dart';
 import 'login_screen_client.dart';
 import 'package:proyectobd/screens/car_screen.dart';
+import 'package:sqflite/sqflite.dart';
 
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
@@ -160,7 +161,7 @@ class _ClientScreenState extends State<ClientScreen> {
                   btnColor: Colors.orange.shade600,
                   fontSize: 15,
                   textColor: Colors.white,
-                  onPressed: () {
+                  onPressed: () async {
                     final client = Client(
                       name: nameController.text,
                       email: emailController.text,
@@ -172,15 +173,66 @@ class _ClientScreenState extends State<ClientScreen> {
                       city: cityController.text,
                       age: int.parse(ageController.text),
                     );
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return CarScreen(
-                            client: client,
+                    if (nameController.text.isEmpty ||
+                        emailController.text.isEmpty ||
+                        passwordController.text.isEmpty ||
+                        cellphoneController.text.isEmpty ||
+                        cityController.text.isEmpty ||
+                        addressController.text.isEmpty ||
+                        ageController.text.isEmpty ||
+                        dateController.text.isEmpty ||
+                        _genderController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Por favor, llene todos los campos'),
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    } else {
+                      try {
+                        debugPrint('Registering car');
+                        int result = await dbHelper.insertClient(client);
+                        if (result > 0 && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Registro Exitoso de Cliente!'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
                           );
-                        },
-                      ),
-                    );
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return CarScreen(
+                                    client: client, clientId: result);
+                              },
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (e is DatabaseException) {
+                          String errorMessage = e.toString();
+                          RegExp regExp =
+                              RegExp("Error: Client email already exists (.+)");
+                          Match? match = regExp.firstMatch(errorMessage);
+                          if (match != null) {
+                            errorMessage = match.group(1) ?? errorMessage;
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Correo ya registrado! intente de nuevo'),
+                              backgroundColor: Colors.orange,
+                              duration: Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      }
+                    }
                   },
                 ),
               ),

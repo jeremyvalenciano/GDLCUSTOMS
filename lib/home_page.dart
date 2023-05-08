@@ -19,12 +19,22 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 180.0, bottom: 25.0),
+            margin: const EdgeInsets.only(top: 80.0, bottom: 25.0),
             child: const Center(
               child: Text(
-                'Guadalajara \n Customs',
+                'GUADALAJARA \n CUSTOMS',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 54, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: const Center(
+              child: Image(
+                image: AssetImage('assets/images/Logo.png'),
+                width: 150,
+                height: 150,
               ),
             ),
           ),

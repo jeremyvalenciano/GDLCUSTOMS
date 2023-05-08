@@ -191,6 +191,8 @@ class _ServicesListViewState extends State<ServicesListView> {
                 fontSize: 16.0);
           }
           if (widget.autoSelected != null && _selectedServices.isNotEmpty) {
+            debugPrint(
+                'Auto seleccionado: ${widget.autoSelected!.id} - model ${widget.autoSelected!.model} - ${widget.autoSelected!.licencePlate}');
             Fluttertoast.showToast(
                 msg: 'Solicitud enviada',
                 toastLength: Toast.LENGTH_SHORT,
