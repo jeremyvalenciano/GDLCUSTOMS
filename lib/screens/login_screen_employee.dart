@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/client/home_page_client.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/employee/home_page_employee.dart';
 import '../select_user.dart';
@@ -85,7 +84,7 @@ class _LoginScreenEmployeeState extends State<LoginScreenEmployee> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(top: 20, bottom: 40),
+              padding: const EdgeInsets.only(top: 15, bottom: 25),
               child: RoundedButton(
                   text: "Iniciar sesion",
                   textColor: Colors.white,

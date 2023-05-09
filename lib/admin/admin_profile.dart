@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/admin/home_page_admin.dart';
+
 import 'package:proyectobd/components/label_text.dart';
 import 'package:proyectobd/components/simple_text.dart';
-import 'package:proyectobd/components/rounded_button.dart';
-import 'package:proyectobd/classes/admin_class.dart';
+
+
 import 'package:proyectobd/database.dart';
 
 final dbHelper = DatabaseHelper.instance;

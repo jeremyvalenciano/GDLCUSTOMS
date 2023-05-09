@@ -124,7 +124,7 @@ class CardRequest extends StatelessWidget {
                               child: const Text("Si, aceptar"),
                               onPressed: () {
                                 dbHelper.asignEmployeeIdToRequest(
-                                    requestId!, employee.id!);
+                                    requestId!, employee.id!, employee.name);
                                 onUpdateRequestList();
                                 Navigator.of(context).pop();
                               },

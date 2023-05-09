@@ -1,6 +1,5 @@
 // This file contains the database helper class
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/classes/admin_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
@@ -50,7 +49,7 @@ class DatabaseHelper {
             address TEXT NOT NULL,
             genre TEXT NOT NULL,
             city TEXT NOT NULL,
-            age INTEGER NOT NULL
+            age INTEGER DEFAULT 0
           )
           ''');
     await db.execute('''
@@ -65,7 +64,7 @@ class DatabaseHelper {
             city TEXT NOT NULL,
             genre TEXT NOT NULL,
             birthday TEXT NOT NULL,
-            age INTEGER NOT NULL,
+            age INTEGER DEFAULT 0,
             role TEXT NOT NULL,
             fiscalRegime TEXT NOT NULL
           )
@@ -94,12 +93,13 @@ class DatabaseHelper {
             carId INTEGER NOT NULL,
             employeeId INTEGER DEFAULT 0,
             clientName TEXT NOT NULL,
+            employeeName TEXT DEFAULT 'N/A',
             modelCar TEXT NOT NULL,
             brandCar TEXT NOT NULL,
             licencePlate TEXT NOT NULL,
             date TEXT NOT NULL,
             status TEXT DEFAULT 'Revision',
-            paid TEXT NOT NULL,
+            paid TEXT DEFAULT 'No',
             FOREIGN KEY (clientId) REFERENCES Clients(id),
             FOREIGN KEY (employeeId) REFERENCES Employees(id),
             FOREIGN KEY (carId) REFERENCES Cars(id)
@@ -166,6 +166,16 @@ class DatabaseHelper {
       BEGIN
         SELECT CASE WHEN (SELECT 1 FROM Cars WHERE licencePlate = NEW.licencePlate) THEN
           RAISE(ABORT, 'Error: LicencePlate already exists')
+        END;
+      END;
+    ''');
+    await db.execute('''
+      CREATE TRIGGER IF NOT EXISTS check_unique_rfc
+      BEFORE INSERT ON Employees
+      FOR EACH ROW
+      BEGIN
+        SELECT CASE WHEN (SELECT 1 FROM Employees WHERE rfc = NEW.rfc) THEN
+          RAISE(ABORT, 'Error: rfc already exists')
         END;
       END;
     ''');
@@ -527,6 +537,33 @@ class DatabaseHelper {
     return id;
   }
 
+  Future<ServiceRequest> getRequestById(int? id) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Requests',
+      where: 'id= ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return ServiceRequest(
+        id: maps.first["id"],
+        clientId: maps.first["clientId"],
+        carId: maps.first["carId"],
+        employeeId: maps.first["employeeId"],
+        clientName: maps.first["clientName"],
+        employeeName: maps.first["employeeName"],
+        modelCar: maps.first["modelCar"],
+        brandCar: maps.first["brandCar"],
+        licencePlate: maps.first["licencePlate"],
+        date: maps.first["date"],
+        status: maps.first["status"],
+        paid: maps.first["paid"],
+      );
+    } else {
+      throw Exception('No se encontró el carro con el id: $id');
+    }
+  }
+
   Future<List<ServiceRequest>> getRequests() async {
     Database db = await instance.database;
     var result = await db
@@ -542,12 +579,15 @@ class DatabaseHelper {
     return await db.delete('Requests', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<void> asignEmployeeIdToRequest(int id, int employeeId) async {
+  Future<void> asignEmployeeIdToRequest(
+      int id, int employeeId, String empName) async {
     Database db = await instance.database;
     await db.rawUpdate(
         'UPDATE Requests SET employeeId = ? WHERE id = ?', [employeeId, id]);
     await db.rawUpdate(
         'UPDATE Requests SET status = ? WHERE id = ?', ['Aceptado', id]);
+    await db.rawUpdate(
+        'UPDATE Requests SET employeeName = ? WHERE id = ?', [empName, id]);
   }
 
   Future<void> updateRequestStatus(int id, String status) async {
@@ -569,6 +609,7 @@ class DatabaseHelper {
         clientId: maps.first["clientId"],
         carId: maps.first["carId"],
         clientName: maps.first["clientName"],
+        employeeName: maps.first["employeeName"],
         modelCar: maps.first["modelCar"],
         brandCar: maps.first["brandCar"],
         licencePlate: maps.first["licencePlate"],

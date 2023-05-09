@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:proyectobd/components/card_actual_car.dart';
 import 'package:proyectobd/components/card_request.dart';
-import 'package:proyectobd/employee/edit_status.dart';
 import 'package:proyectobd/employee/service_details.dart';
 import 'package:proyectobd/home_page.dart';
 import 'package:proyectobd/database.dart';
 import 'package:proyectobd/classes/employee_class.dart';
-import 'package:proyectobd/classes/car_class.dart';
-import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/employee/employee_profile_view.dart';
 
 class HomePageEmployee extends StatefulWidget {

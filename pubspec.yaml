@@ -48,6 +48,7 @@ dependencies:
   fluttertoast: ^8.2.1
   url_launcher: ^6.1.10
   flutter_phone_direct_caller: ^2.1.1
+  pdf: ^3.10.1
 
 
 dev_dependencies:

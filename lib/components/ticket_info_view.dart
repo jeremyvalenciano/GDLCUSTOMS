@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/components/rounded_button.dart';
-import 'package:proyectobd/components/service_element.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
-import 'package:proyectobd/classes/car_class.dart';
+import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:proyectobd/database.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pdfWidgets;
+
+Future<void> generatePDF() async {
+  final pdf = pdfWidgets.Document();
+
+  pdf.addPage(pdfWidgets.Page(
+    build: (context) {
+      return pdfWidgets.Center(
+        child: pdfWidgets.Text(
+          '¡Hola, este es mi primer PDF en Flutter!',
+        ),
+      );
+    },
+  ));
+
+  final bytes = await pdf.save();
+  // Aquí puede guardar el archivo o enviarlo por correo electrónico, etc.
+}
 
 Future<void> dialNumber(String phoneNumber) async {
   final Uri launchUri = Uri(
@@ -19,17 +37,7 @@ class TicketInfoView extends StatefulWidget {
   final int? clientId;
   final int? requestId;
   final int? carId;
-  final String? brandCar;
-  final String? modelCar;
-  final String? licencePlate;
-  const TicketInfoView(
-      {this.clientId,
-      this.requestId,
-      this.carId,
-      this.brandCar,
-      this.modelCar,
-      this.licencePlate,
-      super.key});
+  const TicketInfoView({this.clientId, this.requestId, this.carId, super.key});
 
   @override
   State<TicketInfoView> createState() => _TicketInfoViewState();
@@ -44,6 +52,8 @@ class _TicketInfoViewState extends State<TicketInfoView> {
   String clientEmail = '';
   String clientAddress = '';
   String clientCity = '';
+  String carInfo = '';
+  String? employeeName = '';
   double total = 0;
 
   getClientById() async {
@@ -82,11 +92,22 @@ class _TicketInfoViewState extends State<TicketInfoView> {
     });
   }
 
+  getRequestById() async {
+    Future<ServiceRequest> request = dbHelper.getRequestById(widget.requestId);
+    request.then((req) {
+      setState(() {
+        carInfo = '${req.brandCar} - ${req.modelCar} - ${req.licencePlate}';
+        employeeName = req.employeeName;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getClientById();
     getServiceByRequestId();
+    getRequestById();
   }
 
   @override
@@ -150,8 +171,15 @@ class _TicketInfoViewState extends State<TicketInfoView> {
                     const Text('Auto: ',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(
-                        '${widget.brandCar} ${widget.modelCar} - ${widget.licencePlate}'),
+                    Text(carInfo),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text('Atendio: ',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(employeeName!),
                   ],
                 ),
                 Row(
@@ -248,12 +276,12 @@ class _TicketInfoViewState extends State<TicketInfoView> {
                 ),
                 Center(
                   child: RoundedButton(
-                    text: 'Enviar al Correo',
+                    text: 'Generar PDF',
                     textColor: Colors.black,
                     btnColor: Colors.orange,
                     fontSize: 15,
                     onPressed: () {
-                      dialNumber(clientPhone);
+                      generatePDF();
                     },
                   ),
                 )

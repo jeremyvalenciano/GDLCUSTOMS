@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/classes/service_class.dart';
-import 'package:proyectobd/classes/employee_class.dart';
-import 'package:proyectobd/classes/client_class.dart';
+
 import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/employee/home_page_employee.dart';
 import 'package:intl/intl.dart';
@@ -107,7 +105,7 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
         return AlertDialog(
           title: const Text("¿Estás seguro?"),
           content: Text(
-            "¿Estás seguro de que deseas cambiar el estado a '$_selectedStatus'?",
+            "¿Estás seguro de que deseas cambiar el estado a '$_selectedStatus'?, Esto generara la factura al cliente",
           ),
           actions: [
             TextButton(
@@ -153,7 +151,6 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
       debugPrint("empleado: ${widget.employeeId}");
       debugPrint("carId: ${widget.carId}");
       debugPrint("requestId: ${widget.requestId}");
-      debugPrint("a Ingresar: ${totalServiceCost}");
     }
   }
 }

@@ -142,9 +142,6 @@ class CardActualCar extends StatelessWidget {
                             requestId: requestId,
                             employeeId: employeeId,
                             carId: carId,
-                            brandCar: brand,
-                            modelCar: model,
-                            licencePlate: licencePlates,
                           );
                         },
                       ),

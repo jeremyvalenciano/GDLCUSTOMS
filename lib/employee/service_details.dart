@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:proyectobd/components/rounded_button.dart';
-import 'package:proyectobd/components/service_element.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
@@ -19,19 +19,9 @@ class ServiceDetails extends StatefulWidget {
   final int? requestId;
   final int? employeeId;
   final int? carId;
-  final String? brandCar;
-  final String? modelCar;
-  final String? licencePlate;
 
   const ServiceDetails(
-      {this.clientId,
-      this.requestId,
-      this.employeeId,
-      this.carId,
-      this.brandCar,
-      this.modelCar,
-      this.licencePlate,
-      super.key});
+      {this.clientId, this.requestId, this.employeeId, this.carId, super.key});
 
   @override
   State<ServiceDetails> createState() => _ServiceDetailsState();
@@ -46,6 +36,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   String clientEmail = '';
   String clientAddress = '';
   String clientCity = '';
+  String carInfo = '';
   double total = 0;
 
   getClientById() async {
@@ -72,11 +63,21 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     });
   }
 
+  getRequestById() async {
+    Future<ServiceRequest> request = dbHelper.getRequestById(widget.requestId);
+    request.then((req) {
+      setState(() {
+        carInfo = '${req.brandCar} - ${req.modelCar} - ${req.licencePlate}';
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getClientById();
     getServiceByRequestId();
+    getRequestById();
   }
 
   @override
@@ -140,7 +141,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     const Text('Auto: ',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text('$widget.brandCar $widget.modelCar'),
+                    Text(carInfo),
                   ],
                 ),
                 Row(

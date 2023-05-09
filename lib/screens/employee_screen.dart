@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/home_page.dart';
-import 'login_screen_client.dart';
+import 'login_screen_employee.dart';
 import '../classes/employee_class.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -243,20 +243,28 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         } catch (e) {
                           if (e is DatabaseException) {
                             String errorMessage = e.toString();
-                            RegExp regExp = RegExp(
-                                "Error: Employee email already exists (.+)");
-                            Match? match = regExp.firstMatch(errorMessage);
-                            if (match != null) {
-                              errorMessage = match.group(1) ?? errorMessage;
+                            if (errorMessage.contains("rfc already exists")) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('RFC ya registrado!'),
+                                  backgroundColor: Colors.orange,
+                                  duration: Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            } else if (errorMessage
+                                .contains("Employee email already exists")) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Correo ya registrado!'),
+                                  backgroundColor: Colors.orange,
+                                  duration: Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            } else {
+                              // Manejar cualquier otro tipo de error aquí
                             }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Correo ya registrado!'),
-                                backgroundColor: Colors.orange,
-                                duration: Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
                           }
                         }
                       }
@@ -281,7 +289,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return const LoginScreenClient();
+                              return const LoginScreenEmployee();
                             },
                           ),
                         );

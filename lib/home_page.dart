@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:proyectobd/client/home_page_client.dart';
-import 'package:proyectobd/screens/client_screen.dart';
-import 'package:proyectobd/screens/login_screen_employee.dart';
-import 'package:proyectobd/screens/employee_screen.dart';
 import 'package:proyectobd/select_user.dart';
 import 'package:proyectobd/select_user_login.dart';
 
-import 'screens/login_screen_client.dart';
 //import 'select_user.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 
@@ -52,7 +47,7 @@ class HomePage extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 55.0),
             child: Center(
               child: RoundedButton(
-                text: 'Empezar',
+                text: 'Registrate',
                 textColor: Colors.white,
                 btnColor: Colors.blue,
                 fontSize: 18,

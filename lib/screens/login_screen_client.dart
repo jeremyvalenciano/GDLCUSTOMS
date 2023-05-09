@@ -84,7 +84,7 @@ class _LoginScreenClientState extends State<LoginScreenClient> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(top: 20, bottom: 40),
+              padding: const EdgeInsets.only(top: 15, bottom: 25),
               child: RoundedButton(
                   text: "Iniciar sesion",
                   textColor: Colors.white,

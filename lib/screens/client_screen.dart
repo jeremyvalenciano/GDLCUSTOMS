@@ -162,17 +162,6 @@ class _ClientScreenState extends State<ClientScreen> {
                   fontSize: 15,
                   textColor: Colors.white,
                   onPressed: () async {
-                    final client = Client(
-                      name: nameController.text,
-                      email: emailController.text,
-                      password: passwordController.text,
-                      cellphone: cellphoneController.text,
-                      birthday: dateController.text,
-                      address: addressController.text,
-                      genre: _genderController.text,
-                      city: cityController.text,
-                      age: int.parse(ageController.text),
-                    );
                     if (nameController.text.isEmpty ||
                         emailController.text.isEmpty ||
                         passwordController.text.isEmpty ||
@@ -191,6 +180,17 @@ class _ClientScreenState extends State<ClientScreen> {
                         ),
                       );
                     } else {
+                      final client = Client(
+                        name: nameController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
+                        cellphone: cellphoneController.text,
+                        birthday: dateController.text,
+                        address: addressController.text,
+                        genre: _genderController.text,
+                        city: cityController.text,
+                        age: int.parse(ageController.text),
+                      );
                       try {
                         debugPrint('Registering car');
                         int result = await dbHelper.insertClient(client);

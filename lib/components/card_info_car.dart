@@ -4,12 +4,10 @@ import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/client/home_page_client.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 /*Future<String?> getFirstImageUrl(String searchText) async {
-  final String apiKey = 'AIzaSyBal3rXuXMXcNeqkQ1F_OU0f825ptk1DcY';
-  final String searchEngineId = 'c712f948d33c04341';
+  final String apiKey = '';
+  final String searchEngineId = '';
   final String url = 'https://www.googleapis.com/customsearch/v1?'
       'key=$apiKey'
       '&cx=$searchEngineId'

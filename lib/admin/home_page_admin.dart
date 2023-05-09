@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:proyectobd/admin/admin_profile.dart';
 import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
-import 'package:proyectobd/classes/admin_class.dart';
 import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/components/ticket_info_view.dart';
 import 'package:proyectobd/database.dart';
