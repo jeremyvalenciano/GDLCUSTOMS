@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:googleapis/displayvideo/v1.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:proyectobd/database.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pdfWidgets;
+
+import 'dart:io';
+
+import 'package:pdf/widgets.dart' as pw;
+
+import '../api/pdf_Api.dart';
+import '../api/pdf_invoice_api.dart';
 
 Future<void> generatePDF() async {
-  final pdf = pdfWidgets.Document();
-
-  pdf.addPage(pdfWidgets.Page(
-    build: (context) {
-      return pdfWidgets.Center(
-        child: pdfWidgets.Text(
-          '¡Hola, este es mi primer PDF en Flutter!',
-        ),
-      );
-    },
-  ));
-
-  final bytes = await pdf.save();
+  final invoice = Invoice(
+    name: 'John Doe',
+  );
+  final finalPdf = await PdfInvoiceApi.generate(invoice);
   // Aquí puede guardar el archivo o enviarlo por correo electrónico, etc.
+  PdfApi.openFile(finalPdf);
 }
 
 Future<void> dialNumber(String phoneNumber) async {
@@ -280,11 +278,21 @@ class _TicketInfoViewState extends State<TicketInfoView> {
                     textColor: Colors.black,
                     btnColor: Colors.orange,
                     fontSize: 15,
-                    onPressed: () {
-                      generatePDF();
+                    onPressed: () async {
+                      final pdf = pw.Document();
+
+                      pdf.addPage(
+                        pw.Page(
+                          build: (pw.Context context) => pw.Center(
+                            child: pw.Text('Hello World!'),
+                          ),
+                        ),
+                      );
+                      final file = File('example.pdf');
+                      await file.writeAsBytes(await pdf.save());
                     },
                   ),
-                )
+                ),
               ],
             ),
           ),

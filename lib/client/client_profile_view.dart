@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/client/edit_client_profile.dart';
 import 'package:proyectobd/components/label_text.dart';
 import 'package:proyectobd/components/simple_text.dart';
 import 'package:proyectobd/components/rounded_button.dart';
@@ -63,7 +64,15 @@ class _ClientProfileViewState extends State<ClientProfileView> {
                   textColor: Colors.white,
                   btnColor: Colors.blue,
                   fontSize: 18,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return EditClientprofile(client: widget.client);
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

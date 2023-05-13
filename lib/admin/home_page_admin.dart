@@ -186,6 +186,9 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                 backgroundImage: NetworkImage(
                     'https://www.lansweeper.com/wp-content/uploads/2018/05/ASSET-USER-ADMIN.png'),
               ),
+              decoration: BoxDecoration(
+                color: Colors.green,
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.person),

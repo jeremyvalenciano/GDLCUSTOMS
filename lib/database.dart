@@ -112,10 +112,8 @@ class DatabaseHelper {
             carId INTEGER NOT NULL,
             requestId INTEGER NOT NULL,
             name TEXT NOT NULL,
-            description TEXT NOT NULL,
-            productsCost FLOAT DEFAULT 0,
+            description TEXT NOT NULL,            
             serviceCost FLOAT DEFAULT 0,
-            finalCost FLOAT DEFAULT 0,
             estimatedTime INT DEFAULT 0,
             FOREIGN KEY (clientId) REFERENCES Clients(id),
             FOREIGN KEY (carId) REFERENCES Cars(id),
@@ -176,6 +174,16 @@ class DatabaseHelper {
       BEGIN
         SELECT CASE WHEN (SELECT 1 FROM Employees WHERE rfc = NEW.rfc) THEN
           RAISE(ABORT, 'Error: rfc already exists')
+        END;
+      END;
+    ''');
+    await db.execute('''
+      CREATE TRIGGER IF NOT EXISTS check_update_unique_email_client
+      BEFORE UPDATE ON Clients
+      FOR EACH ROW
+      BEGIN
+        SELECT CASE WHEN (SELECT 1 FROM Clients WHERE email = NEW.email) THEN
+          RAISE(ABORT, 'Error: email already in use')
         END;
       END;
     ''');
@@ -254,6 +262,16 @@ class DatabaseHelper {
       'Clients',
       client.toMap(),
       //conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<int> updateClient(int id, Client client) async {
+    final db = await database;
+    return await db.update(
+      'Clients',
+      client.toMap(),
+      where: 'id = ?',
+      whereArgs: [id],
     );
   }
 
@@ -445,6 +463,16 @@ class DatabaseHelper {
     return await db.delete('Services', where: 'id = ?', whereArgs: [id]);
   }
 
+  Future<void> updateServiceCosts(int id, double serviceCost) async {
+    final db = await database;
+    await db.update(
+      'Services',
+      {'serviceCost': serviceCost},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   //Car Functions
   Future<List<Car>> getCars() async {
     Database db = await instance.database;
@@ -633,6 +661,16 @@ class DatabaseHelper {
         ? result.map((json) => ServiceRequest.fromMap(json)).toList()
         : [];
     return requests;
+  }
+
+  Future<void> updateTotalTicket(int requestId, double total) async {
+    final db = await database;
+    await db.update(
+      'Tickets',
+      {'total': total},
+      where: 'requestId = ?',
+      whereArgs: [requestId],
+    );
   }
 
   //Ticket Functions

@@ -2,6 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:proyectobd/components/status_selection_dialog.dart';
 import 'package:proyectobd/employee/service_details.dart';
 
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+Future<List<String>> searchImages(String query) async {
+  const apiKey =
+      'AIzaSyBgWozMBBzay_3aFfVeWDXqSvl-ijsrMLE'; // Reemplaza por tu propia API Key
+  final searchUrl =
+      'https://www.googleapis.com/customsearch/v1?key=$apiKey&cx=c712f948d33c04341&searchType=image&q=$query';
+
+  final response = await http.get(Uri.parse(searchUrl));
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+
+    if (data['items'] != null) {
+      final items = List.from(data['items']);
+      final imageUrls = items.map((item) => item['link']).toList();
+      return imageUrls.cast<String>();
+    }
+  }
+
+  return [];
+}
+
 class CardActualCar extends StatelessWidget {
   final int? requestId;
   final int? employeeId;
