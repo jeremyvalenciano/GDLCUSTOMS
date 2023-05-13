@@ -1,34 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:googleapis/photoslibrary/v1.dart';
+
 import 'package:proyectobd/admin/admin_login.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/client/home_page_client.dart';
 
-/*Future<String?> getFirstImageUrl(String searchText) async {
-  final String apiKey = '';
-  final String searchEngineId = '';
-  final String url = 'https://www.googleapis.com/customsearch/v1?'
-      'key=$apiKey'
-      '&cx=$searchEngineId'
-      '&searchType=image'
-      '&q=$searchText';
-
-  final response = await http.get(Uri.parse(url));
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> data = jsonDecode(response.body);
-    if (data != null && data['items'] != null) {
-      final items = data['items'] as List;
-      if (items.isNotEmpty) {
-        final imageUrl = items.first['link'] as String;
-        debugPrint('imageUrl: $imageUrl');
-        return imageUrl;
-      }
-    }
-  }
-
-  return '';
-}*/
+import 'package:unsplash_client/unsplash_client.dart';
 
 class CardInfoCar extends StatefulWidget {
   final Car car;
@@ -40,9 +19,32 @@ class CardInfoCar extends StatefulWidget {
 }
 
 class _CardInfoCarState extends State<CardInfoCar> {
+  Future<String> getImageUnsplash() async {
+    // get a random photo
+    final client = UnsplashClient(
+      settings: const ClientSettings(
+          credentials: AppCredentials(
+        accessKey: 'rqwf_U-7jPNYHiuB_p46zrrQy0YuqkznOF1kGy2uAuc',
+        secretKey: '7vEgYfg10Wni_b4yj7lwV5kSC4lvzg8RsZG7cTDiO8E',
+      )),
+    );
+    // Call `goAndGet` to execute the [Request] returned from `random`
+// and throw an exception if the [Response] is not ok.
+    final carToSearch = '${widget.car.brand} ${widget.car.model}';
+    //final carToSearch = 'toyota corolla';
+    final photos = await client.search.photos(carToSearch).goAndGet();
+
+// The api returns a `Photo` which contains metadata about the photo and urls to download it.
+    final photo = photos.results.first;
+    return photo.urls.regular.toString();
+  }
+
+  late Future<String> imageUrl;
   @override
   void initState() {
     super.initState();
+    imageUrl = getImageUnsplash();
+    debugPrint('imageUrl: $imageUrl');
   }
 
   @override
@@ -106,12 +108,26 @@ class _CardInfoCarState extends State<CardInfoCar> {
               ),
             ],
           ),
+          const SizedBox(height: 16.0),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.network(
-                'https://static.vecteezy.com/system/resources/previews/008/561/510/non_2x/simple-icon-modern-sign-car-silhouette-on-background-front-view-car-icon-vehicle-inspiration-editable-eps10-free-vector.jpg',
-                height: 325.0,
+              FutureBuilder<String>(
+                future: imageUrl,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Image.network(
+                      snapshot.data!,
+                      height: 200,
+                      width: 200,
+                      fit: BoxFit.cover,
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error loading image');
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
               ),
               const Text(
                 'Placas',
