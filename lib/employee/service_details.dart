@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
+import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
@@ -39,6 +40,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   String clientCity = '';
   String carInfo = '';
   double total = 0;
+  double sparePartsCost = 0;
+  double extraCost = 0;
 
   getClientById() async {
     Future<Client> futureClient = dbHelper.getClientById(widget.clientId!);
@@ -67,6 +70,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     for (var service in services) {
       total += service.serviceCost;
     }
+    total += sparePartsCost;
+    total += extraCost;
     dbHelper.updateTotalTicket(widget.requestId!, total);
   }
 
@@ -75,6 +80,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     request.then((req) {
       setState(() {
         carInfo = '${req.brandCar} - ${req.modelCar} - ${req.licencePlate}';
+        sparePartsCost = req.sparePartsCost!;
+        extraCost = req.extraCost!;
+        //debugPrint('spare: ${req.extraCost}');
       });
     });
   }
@@ -238,6 +246,32 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        const Text('Costo Refacciones: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(sparePartsCost.toString()),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12, right: 20, left: 20, bottom: 35),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Costo extra: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(extraCost.toString()),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12, right: 20, left: 20, bottom: 35),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         const Text('Total: ',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
@@ -256,9 +290,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
                         // Define los controladores para los inputs de precio de refacciones y costo adicional
                         final TextEditingController partsPriceController =
-                            TextEditingController();
+                            TextEditingController(
+                                text: sparePartsCost.toString());
                         final TextEditingController additionalCostController =
-                            TextEditingController();
+                            TextEditingController(text: extraCost.toString());
 
                         // Crea el AlertDialog
                         showDialog(
@@ -303,6 +338,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                     labelText: 'Costo de refacciones',
                                     suffixIcon: Icon(Icons.attach_money),
                                   ),
+                                  onChanged: (value) {
+                                    // Actualiza el precio del servicio
+                                    sparePartsCost = double.parse(value);
+                                  },
                                 ),
                                 const SizedBox(height: 16),
                                 // Input para costo adicional
@@ -313,6 +352,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                     labelText: 'Agregar costo adicional',
                                     suffixIcon: Icon(Icons.attach_money),
                                   ),
+                                  onChanged: (value) {
+                                    // Actualiza el precio del servicio
+                                    extraCost = double.parse(value);
+                                  },
                                 ),
                               ],
                             ),
@@ -325,15 +368,25 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               // Botón de "Guardar"
                               ElevatedButton(
                                 onPressed: () {
+                                  // Actualiza el precio de refacciones
+                                  double partsPrice =
+                                      double.parse(partsPriceController.text);
+                                  double additionalCost = double.parse(
+                                      additionalCostController.text);
                                   for (var service in services) {
                                     debugPrint(
                                         'ServiceId ${service.id} - ${service.serviceCost}');
 
                                     dbHelper.updateServiceCosts(
                                         service.id!, service.serviceCost);
+
                                     getServiceByRequestId();
                                     calculateTotal();
                                   }
+                                  dbHelper.updateRequestPrices(
+                                      widget.requestId!,
+                                      partsPrice,
+                                      additionalCost);
                                   // Aquí podrías guardar los precios y realizar cualquier otra acción que necesites
                                   Navigator.pop(context);
                                   //updatedServices = services;
@@ -357,7 +410,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                         dialNumber(clientPhone);
                       },
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),

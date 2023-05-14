@@ -52,6 +52,8 @@ class _TicketInfoViewState extends State<TicketInfoView> {
   String clientCity = '';
   String carInfo = '';
   String? employeeName = '';
+  double sparePartsCost = 0;
+  double extraCost = 0;
   double total = 0;
 
   getClientById() async {
@@ -96,6 +98,8 @@ class _TicketInfoViewState extends State<TicketInfoView> {
       setState(() {
         carInfo = '${req.brandCar} - ${req.modelCar} - ${req.licencePlate}';
         employeeName = req.employeeName;
+        sparePartsCost = req.sparePartsCost!;
+        extraCost = req.extraCost!;
       });
     });
   }
@@ -258,6 +262,32 @@ class _TicketInfoViewState extends State<TicketInfoView> {
                   thickness: 0.8,
                   indent: 8,
                   endIndent: 8,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 5, right: 20, left: 20, bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Costo Refacciones: ',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(sparePartsCost.toString()),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 5, right: 20, left: 20, bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Costo extra: ',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(extraCost.toString()),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(

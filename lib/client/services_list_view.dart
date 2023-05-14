@@ -206,6 +206,8 @@ class _ServicesListViewState extends State<ServicesListView> {
                 carId: widget.autoSelected!.id,
                 clientName: widget.client.name,
                 modelCar: widget.autoSelected!.model,
+                sparePartsCost: 0.0,
+                extraCost: 0.0,
                 brandCar: widget.autoSelected!.brand,
                 licencePlate: widget.autoSelected!.licencePlate,
                 status: 'Pendiente',

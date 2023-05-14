@@ -4,6 +4,7 @@ class Ticket {
   final int? clientId;
   final int? requestId;
   final int? employeeId;
+  
   final double total;
   final String date;
   final double? iva;

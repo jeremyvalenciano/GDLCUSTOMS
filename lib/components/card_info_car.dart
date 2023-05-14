@@ -118,14 +118,14 @@ class _CardInfoCarState extends State<CardInfoCar> {
                   if (snapshot.hasData) {
                     return Image.network(
                       snapshot.data!,
-                      height: 200,
-                      width: 200,
+                      height: 250,
+                      width: 250,
                       fit: BoxFit.cover,
                     );
                   } else if (snapshot.hasError) {
-                    return Text('Error loading image');
+                    return const Text('Error loading image');
                   } else {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                 },
               ),

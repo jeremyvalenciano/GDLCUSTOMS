@@ -94,6 +94,8 @@ class DatabaseHelper {
             employeeId INTEGER DEFAULT 0,
             clientName TEXT NOT NULL,
             employeeName TEXT DEFAULT 'N/A',
+            sparePartsCost FLOAT DEFAULT 0,
+            extraCost FLOAT DEFAULT 0,
             modelCar TEXT NOT NULL,
             brandCar TEXT NOT NULL,
             licencePlate TEXT NOT NULL,
@@ -580,6 +582,8 @@ class DatabaseHelper {
         employeeId: maps.first["employeeId"],
         clientName: maps.first["clientName"],
         employeeName: maps.first["employeeName"],
+        sparePartsCost: maps.first["sparePartsCost"],
+        extraCost: maps.first["extraCost"],
         modelCar: maps.first["modelCar"],
         brandCar: maps.first["brandCar"],
         licencePlate: maps.first["licencePlate"],
@@ -622,6 +626,17 @@ class DatabaseHelper {
     Database db = await instance.database;
     await db
         .rawUpdate('UPDATE Requests SET status = ? WHERE id = ?', [status, id]);
+  }
+
+  Future<void> updateRequestPrices(
+      int id, double sparePartsCost, double extraCost) async {
+    final db = await database;
+    await db.update(
+      'Requests',
+      {'sparePartsCost': sparePartsCost, 'extraCost': extraCost},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<ServiceRequest> getRequestIdBylicence(String licencePlate) async {
@@ -693,8 +708,42 @@ class DatabaseHelper {
     return tickets;
   }
 
+  Future<Ticket> getTicketByRequestId(int id) async {
+    Database db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Tickets',
+      where: 'requestId= ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Ticket(
+        id: maps.first["id"],
+        carId: maps.first["carId"],
+        clientId: maps.first["clientId"],
+        requestId: maps.first["requestId"],
+        employeeId: maps.first["employeeId"],
+        total: maps.first["total"],
+        date: maps.first["date"],
+        iva: maps.first["iva"],
+      );
+    } else {
+      throw Exception('No se encontró ticket con requestId: $id');
+    }
+  }
+
   Future<int> insertTicket(Ticket ticket) async {
     Database db = await instance.database;
     return await db.insert('Tickets', ticket.toMap());
+  }
+
+  Future<void> updateTicketInfo(
+      int requestId, double sparePartsCost, double extraCost) async {
+    final db = await database;
+    await db.update(
+      'Tickets',
+      {'sparePartsCost': sparePartsCost, 'extraCost': extraCost},
+      where: 'requestId = ?',
+      whereArgs: [requestId],
+    );
   }
 }
