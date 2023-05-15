@@ -4,7 +4,6 @@ import 'login_screen_employee.dart';
 import '../classes/employee_class.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
 import 'package:proyectobd/components/rounded_button.dart';
@@ -141,7 +140,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                 labelText: 'Fecha de nacimiento',
                 hintText: 'Ingrese su fecha de nacimiento',
                 icon: const Icon(Icons.calendar_today),
-                maxLength: 30,
+                maxLength: 10,
                 keyboardType: TextInputType.text,
               ),
               const Text('Seleccione su genero:',

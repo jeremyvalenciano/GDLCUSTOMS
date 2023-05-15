@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyectobd/admin/home_page_admin.dart';
 
 import 'package:proyectobd/components/label_text.dart';
 import 'package:proyectobd/components/simple_text.dart';
@@ -94,7 +95,11 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                               child: const Text("Eliminar"),
                               onPressed: () {
                                 dbHelper.deleteEmployee(widget.employee.rfc);
-                                Navigator.pop(context);
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomePageAdmin()),
+                                    (Route<dynamic> route) => false);
                               },
                             ),
                           ],
