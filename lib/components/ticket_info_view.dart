@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:googleapis/displayvideo/v1.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
@@ -7,22 +6,8 @@ import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
 import 'package:proyectobd/database.dart';
 
-import 'dart:io';
-
-import 'package:pdf/widgets.dart' as pw;
-
-import '../api/pdf_Api.dart';
-import '../api/pdf_invoice_api.dart';
 import '../classes/ticket_class.dart';
-
-Future<void> generatePDF() async {
-  final invoice = Invoice(
-    name: 'John Doe',
-  );
-  final finalPdf = await PdfInvoiceApi.generate(invoice);
-  // Aquí puede guardar el archivo o enviarlo por correo electrónico, etc.
-  PdfApi.openFile(finalPdf);
-}
+import './pdf_preview_page.dart';
 
 Future<void> dialNumber(String phoneNumber) async {
   final Uri launchUri = Uri(
@@ -52,7 +37,9 @@ class _TicketInfoViewState extends State<TicketInfoView> {
   String clientAddress = '';
   String clientCity = '';
   String carInfo = '';
+  String clientRFC = '';
   String? employeeName = '';
+  String licencePlate = '';
   double sparePartsCost = 0;
   double extraCost = 0;
   double total = 0;
@@ -85,6 +72,7 @@ class _TicketInfoViewState extends State<TicketInfoView> {
         employeeName = req.employeeName;
         sparePartsCost = req.sparePartsCost!;
         extraCost = req.extraCost!;
+        licencePlate = req.licencePlate;
       });
     });
   }
@@ -295,17 +283,23 @@ class _TicketInfoViewState extends State<TicketInfoView> {
                     btnColor: Colors.orange,
                     fontSize: 15,
                     onPressed: () async {
-                      final pdf = pw.Document();
-
-                      pdf.addPage(
-                        pw.Page(
-                          build: (pw.Context context) => pw.Center(
-                            child: pw.Text('Hello World!'),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PdfPreviewPage(
+                            requestId: widget.requestId!,
+                            clientName: clientName,
+                            clientPhoneNumber: clientPhone,
+                            clientEmail: clientEmail,
+                            employeeName: employeeName!,
+                            carModel: carInfo,
+                            clientAddress: clientAddress,
+                            licensePlate: licencePlate,
+                            sparePartsCost: sparePartsCost,
+                            extraCost: extraCost,
+                            total: total,
                           ),
                         ),
                       );
-                      final file = File('example.pdf');
-                      await file.writeAsBytes(await pdf.save());
                     },
                   ),
                 ),
@@ -316,4 +310,6 @@ class _TicketInfoViewState extends State<TicketInfoView> {
       ),
     );
   }
+
+  Future<void> _createPDF() async {}
 }
