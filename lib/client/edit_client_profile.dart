@@ -3,7 +3,6 @@ import 'package:proyectobd/client/home_page_client.dart';
 import 'package:proyectobd/database.dart';
 import 'package:proyectobd/components/input_text_field.dart';
 import 'package:proyectobd/components/rounded_button.dart';
-import 'package:proyectobd/client/edit_client_profile.dart';
 import '../classes/client_class.dart';
 import 'package:sqflite/sqflite.dart';
 

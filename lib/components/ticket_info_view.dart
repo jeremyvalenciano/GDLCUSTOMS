@@ -51,6 +51,7 @@ class _TicketInfoViewState extends State<TicketInfoView> {
         clientName = client.name;
         clientPhone = client.cellphone;
         clientEmail = client.email;
+        clientAddress = client.address;
       });
     });
   }
@@ -311,5 +312,4 @@ class _TicketInfoViewState extends State<TicketInfoView> {
     );
   }
 
-  Future<void> _createPDF() async {}
 }

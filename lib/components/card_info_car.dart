@@ -34,7 +34,7 @@ class _CardInfoCarState extends State<CardInfoCar> {
     final photos = await client.search.photos(carToSearch).goAndGet();
 
 // The api returns a `Photo` which contains metadata about the photo and urls to download it.
-    final photo = photos.results.first;
+    final photo = photos.results[8];
     return photo.urls.regular.toString();
   }
 

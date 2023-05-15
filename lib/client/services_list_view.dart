@@ -31,6 +31,7 @@ Future<int> getrequestId(String licence) async {
 }
 
 class _ServicesListViewState extends State<ServicesListView> {
+  double totalServices = 0;
   final List<Service> _services = [
     Service(
         name: 'Revisión General',
@@ -96,6 +97,13 @@ class _ServicesListViewState extends State<ServicesListView> {
         backgroundColor: Colors.grey[600],
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  void calculateTotal() {
+    totalServices = 0;
+    for (int i = 0; i < _selectedServices.length; i++) {
+      totalServices += _selectedServices[i].serviceCost;
+    }
   }
 
   @override
@@ -201,6 +209,7 @@ class _ServicesListViewState extends State<ServicesListView> {
                 backgroundColor: Colors.grey[600],
                 textColor: Colors.white,
                 fontSize: 16.0);
+            calculateTotal();
             Future<int> idRequest = dbHelper.insertRequest(ServiceRequest(
                 clientId: widget.client.id,
                 carId: widget.autoSelected!.id,
@@ -208,7 +217,7 @@ class _ServicesListViewState extends State<ServicesListView> {
                 modelCar: widget.autoSelected!.model,
                 sparePartsCost: 0.0,
                 extraCost: 0.0,
-                total: 0.0,
+                total: totalServices,
                 brandCar: widget.autoSelected!.brand,
                 licencePlate: widget.autoSelected!.licencePlate,
                 status: 'Pendiente',

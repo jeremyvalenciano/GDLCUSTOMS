@@ -46,7 +46,7 @@ class _AdminLoginState extends State<AdminLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LoginScreen Admin'),
+        title: const Text('Login Administrador'),
       ),
       body: Container(
         padding: const EdgeInsets.all(20),

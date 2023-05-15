@@ -14,6 +14,24 @@ double iva = 0;
 double totalFinal = 0;
 List<Service> servicesT = [];
 
+String formatNumberWithCommas(int number) {
+  // Convierte el número a string y lo divide en dos partes:
+  // la parte entera y la parte decimal (si existe)
+  String stringValue = number.toString();
+  List<String> parts = stringValue.split('.');
+
+  // Agrega comas a la parte entera
+  RegExp regex = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+  parts[0] = parts[0].replaceAllMapped(regex, (Match match) => '${match[1]},');
+
+  // Si hay parte decimal, la agrega de nuevo al número formateado
+  if (parts.length == 2) {
+    return '${parts[0]}.${parts[1]}';
+  } else {
+    return parts[0];
+  }
+}
+
 class PdfPreviewPage extends StatelessWidget {
   final String clientName;
   final String clientAddress;
@@ -63,6 +81,8 @@ class PdfPreviewPage extends StatelessWidget {
     subtotal = total;
     iva = subtotal * .16;
     totalFinal = subtotal + iva;
+    String nomb = formatNumberWithCommas(subtotal.toInt());
+    debugPrint('Subtotal: $nomb');
   }
 
   Future<Uint8List> makePdf() async {
@@ -99,7 +119,7 @@ class PdfPreviewPage extends StatelessWidget {
     );
 
     // Table Header
-    final headers = ['Servicio', 'Description', 'Costo'];
+    final headers = ['Servicio', 'Descripción', 'Costo'];
     final tableHeader = pw.Row(
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [

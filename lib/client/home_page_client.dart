@@ -139,7 +139,7 @@ class _HomePageClientState extends State<HomePageClient> {
                             ),
                             title: Text('Folio: ${ticket.id}0'),
                             subtitle: Text(
-                                'Fecha: ${ticket.date} - Total: \$${ticket.total} - Carro: ${ticket.carId} '),
+                                'Fecha: ${ticket.date} - Total:\$${ticket.total} '),
                             trailing: OutlinedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
