@@ -5,6 +5,8 @@ import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/employee/home_page_employee.dart';
 import 'package:intl/intl.dart';
 
+import '../classes/service_request_class.dart';
+
 class StatusSelectionDialog extends StatefulWidget {
   final int? requestId;
   final int? employeeId;
@@ -25,6 +27,9 @@ class StatusSelectionDialog extends StatefulWidget {
 
 class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
   double totalServiceCost = 0;
+  double sparePartsCost = 0;
+  double extraCost = 0;
+  double total = 0;
   List<Service> services = [];
   getServiceByRequestId() async {
     Future<List<Service>> futureServices =
@@ -41,11 +46,26 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
     });
   }
 
+  getRequestById() async {
+    Future<ServiceRequest> request = dbHelper.getRequestById(widget.requestId);
+    request.then((req) {
+      setState(() {
+        sparePartsCost = req.sparePartsCost!;
+        extraCost = req.extraCost!;
+        total = req.total!;
+        debugPrint('spare: ${req.sparePartsCost}');
+        debugPrint('extraCost: ${req.extraCost}');
+        debugPrint('total: ${req.total}');
+      });
+    });
+  }
+
   String? _selectedStatus;
   @override
   void initState() {
     super.initState();
     getServiceByRequestId();
+    getRequestById();
   }
 
   @override
@@ -143,7 +163,7 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
         clientId: widget.clientId,
         carId: widget.carId,
         requestId: widget.requestId,
-        total: totalServiceCost,
+        total: total,
         date: formattedDate,
       ));
       debugPrint("finalizado");

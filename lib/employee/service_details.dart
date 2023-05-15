@@ -42,8 +42,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   double sparePartsCost = 0;
   double extraCost = 0;
 
-  var partsPriceController = TextEditingController(text: '0');
-  var additionalCostController = TextEditingController(text: '0');
+  var partsPriceController = TextEditingController();
+  var additionalCostController = TextEditingController();
 
   getClientById() async {
     Future<Client> futureClient = dbHelper.getClientById(widget.clientId!);
@@ -71,6 +71,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     for (var service in services) {
       total += service.serviceCost;
     }
+    /*setState(() {
+      total += sparePartsCost;
+      total += extraCost;
+    });*/
   }
 
   getRequestById() async {
@@ -81,8 +85,11 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         sparePartsCost = req.sparePartsCost!;
         extraCost = req.extraCost!;
         total = req.total!;
+        partsPriceController.text = sparePartsCost.toString();
+        additionalCostController.text = extraCost.toString();
         debugPrint('spare: ${req.sparePartsCost}');
         debugPrint('extraCost: ${req.extraCost}');
+        debugPrint('total: ${req.total}');
       });
     });
   }
@@ -94,8 +101,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     getServiceByRequestId();
     getRequestById();
     calculateTotal();
-    //partsPriceController.text = sparePartsCost.toString();
-    //additionalCostController.text = extraCost.toString();
   }
 
   @override
@@ -374,17 +379,18 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
                                     dbHelper.updateServiceCosts(
                                         service.id!, service.serviceCost);
-
-                                    getServiceByRequestId();
-                                    calculateTotal();
                                   }
+                                  getServiceByRequestId();
+                                  calculateTotal();
+                                  setState(() {
+                                    total += partsPrice + additionalCost;
+                                  });
                                   dbHelper.updateRequestPrices(
                                       widget.requestId!,
                                       partsPrice,
                                       additionalCost,
                                       total);
-                                  getServiceByRequestId();
-                                  calculateTotal();
+                                  debugPrint('Total: $total');
                                   // Aquí podrías guardar los precios y realizar cualquier otra acción que necesites
                                   Navigator.pop(context);
                                   //updatedServices = services;

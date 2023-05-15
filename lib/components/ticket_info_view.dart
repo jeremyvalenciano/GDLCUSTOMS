@@ -13,6 +13,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 import '../api/pdf_Api.dart';
 import '../api/pdf_invoice_api.dart';
+import '../classes/ticket_class.dart';
 
 Future<void> generatePDF() async {
   final invoice = Invoice(
@@ -66,28 +67,12 @@ class _TicketInfoViewState extends State<TicketInfoView> {
       });
     });
   }
-  //por que no funciona el getCarById()?
-  /*getCarById() async {
-    Future<Car> futureCar = dbHelper.getCarById(widget.carId!);
 
-    futureCar.then((car) {
+  getTicketByRequestId() async {
+    Future<Ticket> ticket = dbHelper.getTicketByRequestId(widget.requestId!);
+    ticket.then((ticket) {
       setState(() {
-        carInfo = car.brand;
-
-        //debugPrint('${car.brand} ${car.model} - ${car.licencePlate}');
-      });
-    });
-  }*/
-
-  getServiceByRequestId() async {
-    Future<List<Service>> futureServices =
-        dbHelper.getServicesByRequestId(widget.requestId!);
-    futureServices.then((services) {
-      setState(() {
-        this.services = services;
-        for (var service in services) {
-          total += service.serviceCost;
-        }
+        total = ticket.total;
       });
     });
   }
@@ -108,8 +93,9 @@ class _TicketInfoViewState extends State<TicketInfoView> {
   void initState() {
     super.initState();
     getClientById();
-    getServiceByRequestId();
     getRequestById();
+    getTicketByRequestId();
+    //calculateTotal();
   }
 
   @override
