@@ -1,41 +1,60 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:proyectobd/home_page.dart';
-import 'login_screen_employee.dart';
 import '../classes/employee_class.dart';
 import 'package:sqflite/sqflite.dart';
-
 
 //Components
 import 'package:proyectobd/components/input_text_field.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 
-class EmployeeScreen extends StatefulWidget {
-  const EmployeeScreen({super.key});
+import 'home_page_employee.dart';
+
+class EditEmployeeProfile extends StatefulWidget {
+  final Employee employee;
+  const EditEmployeeProfile({required this.employee, super.key});
 
   @override
-  State<EmployeeScreen> createState() => _EmployeeScreenState();
+  State<EditEmployeeProfile> createState() => _EditEmployeeProfileState();
 }
 
-class _EmployeeScreenState extends State<EmployeeScreen> {
-  final rfcController = TextEditingController();
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final cellphoneController = TextEditingController();
-  final addressController = TextEditingController();
-  final cityController = TextEditingController();
-  final dateController = TextEditingController();
-  final ageController = TextEditingController();
-  final roleController = TextEditingController();
-  final fiscalRegimeController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
+class _EditEmployeeProfileState extends State<EditEmployeeProfile> {
+  var rfcController = TextEditingController();
+  var nameController = TextEditingController();
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
+  var cellphoneController = TextEditingController();
+  var addressController = TextEditingController();
+  var cityController = TextEditingController();
+  var dateController = TextEditingController();
+  var ageController = TextEditingController();
+  var roleController = TextEditingController();
+  var fiscalRegimeController = TextEditingController();
+  var genderController = TextEditingController();
   String? _selectedGender;
+
+  @override
+  void initState() {
+    super.initState();
+    rfcController.text = widget.employee.rfc;
+    nameController.text = widget.employee.name;
+    emailController.text = widget.employee.email;
+    passwordController.text = widget.employee.password;
+    cellphoneController.text = widget.employee.cellphone;
+    addressController.text = widget.employee.address;
+    cityController.text = widget.employee.city;
+    dateController.text = widget.employee.birthday;
+    ageController.text = widget.employee.age.toString();
+    roleController.text = widget.employee.role;
+    fiscalRegimeController.text = widget.employee.fiscalRegime;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registro de Empleado'),
+        title: const Text('Editar de Empleado'),
         backgroundColor: Colors.blue.shade600,
       ),
       body: SingleChildScrollView(
@@ -154,7 +173,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   onChanged: (value) {
                     setState(() {
                       _selectedGender = value;
-                      _genderController.text = value.toString();
+                      genderController.text = value.toString();
                     });
                   },
                 ),
@@ -165,7 +184,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   onChanged: (value) {
                     setState(() {
                       _selectedGender = value;
-                      _genderController.text = value.toString();
+                      genderController.text = value.toString();
                     });
                   },
                 ),
@@ -174,7 +193,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                 padding: const EdgeInsets.only(top: 60, bottom: 60),
                 child: Center(
                   child: RoundedButton(
-                    text: 'Registrar',
+                    text: 'Editar',
                     btnColor: Colors.blue,
                     fontSize: 15,
                     textColor: Colors.white,
@@ -190,7 +209,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           addressController.text.isEmpty ||
                           ageController.text.isEmpty ||
                           dateController.text.isEmpty ||
-                          _genderController.text.isEmpty) {
+                          genderController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Por favor, llene todos los campos'),
@@ -200,41 +219,45 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           ),
                         );
                       } else {
+                        final employee = Employee(
+                          rfc: rfcController.text,
+                          id: widget.employee.id,
+                          name: nameController.text,
+                          email: emailController.text,
+                          password: passwordController.text,
+                          cellphone: cellphoneController.text,
+                          birthday: dateController.text,
+                          address: addressController.text,
+                          genre: genderController.text,
+                          city: cityController.text,
+                          age: int.parse(ageController.text),
+                          fiscalRegime: fiscalRegimeController.text,
+                          role: roleController.text,
+                        );
                         try {
-                          int result = await dbHelper.insertEmployee(Employee(
-                            rfc: rfcController.text,
-                            name: nameController.text,
-                            email: emailController.text,
-                            password: passwordController.text,
-                            cellphone: cellphoneController.text,
-                            birthday: dateController.text,
-                            address: addressController.text,
-                            genre: _genderController.text,
-                            city: cityController.text,
-                            age: int.parse(ageController.text),
-                            role: roleController.text,
-                            fiscalRegime: fiscalRegimeController.text,
-                          ));
+                          debugPrint('try:');
+                          int result = await dbHelper.updateEmployee(
+                              widget.employee.id!, employee);
+                          debugPrint('Update result: $result');
                           if (result > 0 && mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Registro Exitoso!'),
+                                content:
+                                    Text('Modificacion Exitosa de Empleado!'),
                                 backgroundColor: Colors.green,
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return const HomePage();
-                                },
-                              ),
-                            );
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePageEmployee(employee: employee)),
+                                (Route<dynamic> route) => false);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Registro fallido!'),
+                                content: Text('Modificacion fallida!'),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
@@ -242,22 +265,26 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             );
                           }
                         } catch (e) {
+                          debugPrint('=catch:');
                           if (e is DatabaseException) {
                             String errorMessage = e.toString();
-                            if (errorMessage.contains("rfc already exists")) {
+                            debugPrint('Error: $errorMessage');
+                            if (errorMessage.contains(
+                                "UNIQUE constraint failed: Employees.rfc")) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('RFC ya registrado!'),
+                                  content: Text('RFC en uso!'),
                                   backgroundColor: Colors.orange,
                                   duration: Duration(seconds: 2),
                                   behavior: SnackBarBehavior.floating,
                                 ),
                               );
-                            } else if (errorMessage
-                                .contains("Employee email already exists")) {
+                            } else if (errorMessage.contains(
+                                "UNIQUE constraint failed: Employees.email")) {
+                              debugPrint('email in use:');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Correo ya registrado!'),
+                                  content: Text('Correo en uso!'),
                                   backgroundColor: Colors.orange,
                                   duration: Duration(seconds: 2),
                                   behavior: SnackBarBehavior.floating,
@@ -272,39 +299,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     },
                   ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Center(
-                    child: Text(
-                      'Tienes cuenta?',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return const LoginScreenEmployee();
-                            },
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Iniciar sesión',
-                        style: TextStyle(
-                          fontSize: 18,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

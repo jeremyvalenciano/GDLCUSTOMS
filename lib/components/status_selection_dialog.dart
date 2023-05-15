@@ -105,7 +105,7 @@ class _StatusSelectionDialogState extends State<StatusSelectionDialog> {
         return AlertDialog(
           title: const Text("¿Estás seguro?"),
           content: Text(
-            "¿Estás seguro de que deseas cambiar el estado a '$_selectedStatus'?, Esto generara la factura al cliente",
+            "¿Estás seguro de que deseas cambiar el estado a '$_selectedStatus'?",
           ),
           actions: [
             TextButton(

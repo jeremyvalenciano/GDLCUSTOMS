@@ -5,6 +5,8 @@ import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/classes/employee_class.dart';
 import 'package:proyectobd/database.dart';
 
+import 'edit_employee_profile.dart';
+
 final dbHelper = DatabaseHelper.instance;
 
 class EmployeeProfileView extends StatefulWidget {
@@ -68,7 +70,15 @@ class _EmployeeProfileViewState extends State<EmployeeProfileView> {
                   textColor: Colors.white,
                   btnColor: Colors.blue,
                   fontSize: 18,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return EditEmployeeProfile(employee: widget.employee);
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

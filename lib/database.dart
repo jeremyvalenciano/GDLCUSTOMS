@@ -96,6 +96,7 @@ class DatabaseHelper {
             employeeName TEXT DEFAULT 'N/A',
             sparePartsCost FLOAT DEFAULT 0,
             extraCost FLOAT DEFAULT 0,
+            total FLOAT DEFAULT 0,
             modelCar TEXT NOT NULL,
             brandCar TEXT NOT NULL,
             licencePlate TEXT NOT NULL,
@@ -178,16 +179,26 @@ class DatabaseHelper {
           RAISE(ABORT, 'Error: rfc already exists')
         END;
       END;
-    ''');
-    await db.execute('''
       CREATE TRIGGER IF NOT EXISTS check_update_unique_email_client
       BEFORE UPDATE ON Clients
       FOR EACH ROW
       BEGIN
-        SELECT CASE WHEN (SELECT 1 FROM Clients WHERE email = NEW.email) THEN
-          RAISE(ABORT, 'Error: email already in use')
-        END;
+          DECLARE count_emails INT;
+          SELECT COUNT(*) INTO count_emails FROM Clients WHERE email = NEW.email AND id != NEW.id;
+          IF count_emails > 0 THEN
+              RAISE(ABORT, 'Error: Client email already in use');
+          END IF;
       END;
+      CREATE TRIGGER IF NOT EXISTS check_update_unique_license_plate
+      BEFORE UPDATE ON Cars
+      FOR EACH ROW
+      BEGIN
+          DECLARE count_licences INT;
+          SELECT COUNT(*) INTO count_licences FROM Cars WHERE licencePlate = NEW.licencePlate AND id != NEW.id;
+          IF count_licences > 0 THEN
+              RAISE(ABORT, 'Error: LicencePlate already in use');
+          END IF;
+      END;      
     ''');
   }
 
@@ -435,6 +446,16 @@ class DatabaseHelper {
     }
   }
 
+  Future<int> updateEmployee(int id, Employee employee) async {
+    final db = await database;
+    return await db.update(
+      'Employees',
+      employee.toMap(),
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   //Service Functions
   Future<List<Service>> getServices() async {
     Database db = await instance.database;
@@ -560,6 +581,16 @@ class DatabaseHelper {
     }
   }
 
+  Future<int> updateCar(int id, Car car) async {
+    final db = await database;
+    return await db.update(
+      'Cars',
+      car.toMap(),
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   //Request Functions
   Future<int> insertRequest(ServiceRequest request) async {
     Database db = await instance.database;
@@ -584,6 +615,7 @@ class DatabaseHelper {
         employeeName: maps.first["employeeName"],
         sparePartsCost: maps.first["sparePartsCost"],
         extraCost: maps.first["extraCost"],
+        total: maps.first["total"],
         modelCar: maps.first["modelCar"],
         brandCar: maps.first["brandCar"],
         licencePlate: maps.first["licencePlate"],
@@ -629,11 +661,11 @@ class DatabaseHelper {
   }
 
   Future<void> updateRequestPrices(
-      int id, double sparePartsCost, double extraCost) async {
+      int id, double sparePartsCost, double extraCost, double total) async {
     final db = await database;
     await db.update(
       'Requests',
-      {'sparePartsCost': sparePartsCost, 'extraCost': extraCost},
+      {'sparePartsCost': sparePartsCost, 'extraCost': extraCost, 'total': total},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -678,12 +710,12 @@ class DatabaseHelper {
     return requests;
   }
 
-  Future<void> updateTotalTicket(int requestId, double total) async {
+  Future<void> updateTotalTicket(int requestId, double total, double spare, double extra) async {
     final db = await database;
     await db.update(
-      'Tickets',
-      {'total': total},
-      where: 'requestId = ?',
+      'Requests',
+      {'total': total, 'spareCost': spare, 'extraCost': extra },
+      where: 'id = ?',
       whereArgs: [requestId],
     );
   }

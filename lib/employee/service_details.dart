@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:proyectobd/classes/service_request_class.dart';
-import 'package:proyectobd/classes/ticket_class.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:proyectobd/classes/service_class.dart';
@@ -43,6 +42,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   double sparePartsCost = 0;
   double extraCost = 0;
 
+  var partsPriceController = TextEditingController(text: '0');
+  var additionalCostController = TextEditingController(text: '0');
+
   getClientById() async {
     Future<Client> futureClient = dbHelper.getClientById(widget.clientId!);
     futureClient.then((client) {
@@ -60,7 +62,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     futureServices.then((services) {
       setState(() {
         this.services = services;
-        calculateTotal();
       });
     });
   }
@@ -70,9 +71,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     for (var service in services) {
       total += service.serviceCost;
     }
-    total += sparePartsCost;
-    total += extraCost;
-    dbHelper.updateTotalTicket(widget.requestId!, total);
   }
 
   getRequestById() async {
@@ -82,7 +80,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         carInfo = '${req.brandCar} - ${req.modelCar} - ${req.licencePlate}';
         sparePartsCost = req.sparePartsCost!;
         extraCost = req.extraCost!;
-        //debugPrint('spare: ${req.extraCost}');
+        total = req.total!;
+        debugPrint('spare: ${req.sparePartsCost}');
+        debugPrint('extraCost: ${req.extraCost}');
       });
     });
   }
@@ -93,6 +93,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     getClientById();
     getServiceByRequestId();
     getRequestById();
+    calculateTotal();
+    //partsPriceController.text = sparePartsCost.toString();
+    //additionalCostController.text = extraCost.toString();
   }
 
   @override
@@ -287,14 +290,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                       fontSize: 15,
                       onPressed: () {
                         // Define los servicios disponibles
-
-                        // Define los controladores para los inputs de precio de refacciones y costo adicional
-                        final TextEditingController partsPriceController =
-                            TextEditingController(
-                                text: sparePartsCost.toString());
-                        final TextEditingController additionalCostController =
-                            TextEditingController(text: extraCost.toString());
-
                         // Crea el AlertDialog
                         showDialog(
                           context: context,
@@ -386,7 +381,10 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                                   dbHelper.updateRequestPrices(
                                       widget.requestId!,
                                       partsPrice,
-                                      additionalCost);
+                                      additionalCost,
+                                      total);
+                                  getServiceByRequestId();
+                                  calculateTotal();
                                   // Aquí podrías guardar los precios y realizar cualquier otra acción que necesites
                                   Navigator.pop(context);
                                   //updatedServices = services;

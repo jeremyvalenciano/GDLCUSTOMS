@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:googleapis/photoslibrary/v1.dart';
-
-import 'package:proyectobd/admin/admin_login.dart';
 import 'package:proyectobd/components/rounded_button.dart';
 import 'package:proyectobd/classes/car_class.dart';
 import 'package:proyectobd/classes/client_class.dart';
 import 'package:proyectobd/client/home_page_client.dart';
 
 import 'package:unsplash_client/unsplash_client.dart';
+
+import '../client/edit_car.dart';
 
 class CardInfoCar extends StatefulWidget {
   final Car car;
@@ -179,7 +178,18 @@ class _CardInfoCarState extends State<CardInfoCar> {
                     textColor: Colors.white,
                     btnColor: Colors.blue,
                     fontSize: 18,
-                    onPressed: () {}),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return EditCar(
+                              car: widget.car,
+                              client: widget.client,
+                            );
+                          },
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   width: 10,
                   height: 25,

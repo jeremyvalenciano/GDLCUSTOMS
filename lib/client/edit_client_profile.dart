@@ -41,8 +41,6 @@ class _EditClientprofileState extends State<EditClientprofile> {
     dateController.text = widget.client.birthday;
     ageController.text = widget.client.age.toString();
     genderController.text = widget.client.genre;
-    Future? client;
-    client = dbHelper.getClientById(widget.client.id!);
   }
 
   @override
@@ -231,8 +229,8 @@ class _EditClientprofileState extends State<EditClientprofile> {
                       } catch (e) {
                         if (e is DatabaseException) {
                           String errorMessage = e.toString();
-                          RegExp regExp =
-                              RegExp("'Error: email already in use (.+)");
+                          RegExp regExp = RegExp(
+                              "'Error: Client email already in use (.+)");
                           Match? match = regExp.firstMatch(errorMessage);
                           if (match != null) {
                             errorMessage = match.group(1) ?? errorMessage;

@@ -7,6 +7,7 @@ class ServiceRequest {
   final String? employeeName;
   final double? sparePartsCost;
   final double? extraCost;
+  final double? total;
   final String modelCar;
   final String brandCar;
   final String licencePlate;
@@ -22,6 +23,7 @@ class ServiceRequest {
     required this.clientName,
     this.employeeName,
     this.sparePartsCost,
+    this.total,
     this.extraCost,
     required this.modelCar,
     required this.brandCar,
@@ -38,6 +40,7 @@ class ServiceRequest {
         employeeName: json["employeeName"],
         sparePartsCost: json["sparePartsCost"],
         extraCost: json["extraCost"],
+        total: json["total"],
         modelCar: json["modelCar"],
         brandCar: json["brandCar"],
         licencePlate: json["licencePlate"],
@@ -54,6 +57,7 @@ class ServiceRequest {
         "employeeName": employeeName,
         "sparePartsCost": sparePartsCost,
         "extraCost": extraCost,
+        "total": total,
         "modelCar": modelCar,
         "brandCar": brandCar,
         "licencePlate": licencePlate,

@@ -68,15 +68,6 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
               const LabelText(text: "GENERO"),
               SimpleText(text: widget.employee.genre),
               const SizedBox(height: 20),
-              Center(
-                child: RoundedButton(
-                  text: "Editar",
-                  textColor: Colors.white,
-                  btnColor: Colors.blue,
-                  fontSize: 18,
-                  onPressed: () {},
-                ),
-              ),
               const SizedBox(height: 20),
               Center(
                 child: RoundedButton(
