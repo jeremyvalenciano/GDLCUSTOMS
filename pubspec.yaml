@@ -52,11 +52,11 @@ dependencies:
   unsplash_client: ^2.1.0+3
   printing: ^5.10.4
   flutter_launcher_icons: ^0.13.1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
